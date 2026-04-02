@@ -38,15 +38,19 @@ collections:
 #    output: true
 #  reference:
 #    output: true
+  architecture:
+    output: true
+#  how-to:
+#    output: true
+#  reference:
+#    output: true
 
 just_the_docs:
   collections:
     xp:
       name: Extreme Programming (XP)
-#    reference:
-#      name: Reference
-#    how-to:
-#      name: How-To
+    architecture:
+      name: Architecture
 
 defaults:
   # All regular Jekyll pages
@@ -55,24 +59,17 @@ defaults:
       type: "pages"
     values:
       layout: default
+      
+  # Software Architecture collection
+  - scope:
+      path: ""
+      type: "architecture"
+    values:
+      layout: default
 
   # Extreme Programming (XP) collection
   - scope:
       path: ""
       type: "xp"
-    values:
-      layout: default
-
-  # How-to collection
-  - scope:
-      path: ""
-      type: "how-to"
-    values:
-      layout: default
-
-  # Reference collection
-  - scope:
-      path: ""
-      type: "reference"
     values:
       layout: default
