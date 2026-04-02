@@ -34,16 +34,11 @@ callouts:
 collections:
   xp:
     output: true
-#  how-to:
-#    output: true
-#  reference:
-#    output: true
+  align:
+    output: true
   architecture:
     output: true
-#  how-to:
-#    output: true
-#  reference:
-#    output: true
+
 
 just_the_docs:
   collections:
@@ -51,12 +46,21 @@ just_the_docs:
       name: Extreme Programming (XP)
     architecture:
       name: Architecture
+    align:
+      name: Align
 
 defaults:
   # All regular Jekyll pages
   - scope:
       path: ""
       type: "pages"
+    values:
+      layout: default
+      
+  # Align and Understand collection
+  - scope:
+      path: ""
+      type: "align"
     values:
       layout: default
       
