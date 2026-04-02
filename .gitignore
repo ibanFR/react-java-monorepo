@@ -1,0 +1,14 @@
+# IDE and OS files
+.idea/
+.DS_Store
+
+# Java build output
+backend/target/
+
+# Node dependencies and build cache
+frontend/node_modules/
+frontend/.vite/
+
+# Jekyll build and cache
+/docs/_site/
+/docs/.jekyll-cache/

@@ -1,0 +1,42 @@
+name: Java Build and Test
+
+on:
+  push:
+    branches: [ main, solution ]
+    paths:
+      - 'java/**'
+      - '.github/workflows/java-build-test.yml'
+  pull_request:
+    branches: [ main, solution ]
+    paths:
+      - 'java/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: ['25']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package
+        working-directory: java
+
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: java/target/surefire-reports/
+
