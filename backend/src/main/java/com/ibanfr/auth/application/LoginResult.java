@@ -1,4 +1,4 @@
-package com.example.auth.application;
+package com.ibanfr.auth.application;
 
 /**
  * Represents the result of an authentication attempt.

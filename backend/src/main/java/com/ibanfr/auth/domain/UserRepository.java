@@ -1,4 +1,4 @@
-package com.example.auth.domain;
+package com.ibanfr.auth.domain;
 
 import java.util.Optional;
 

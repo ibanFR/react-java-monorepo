@@ -1,4 +1,4 @@
-package com.example.auth;
+package com.ibanfr.auth;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

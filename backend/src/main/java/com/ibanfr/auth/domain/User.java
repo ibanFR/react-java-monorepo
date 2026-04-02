@@ -1,4 +1,4 @@
-package com.example.auth.domain;
+package com.ibanfr.auth.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.example.auth.api;
+package com.ibanfr.auth.api;
 
 import jakarta.validation.constraints.NotBlank;
 

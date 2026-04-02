@@ -1,6 +1,6 @@
-package com.example.auth.application;
+package com.ibanfr.auth.application;
 
-import com.example.auth.domain.UserRepository;
+import com.ibanfr.auth.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

@@ -1,7 +1,7 @@
-package com.example.auth.infrastructure;
+package com.ibanfr.auth.infrastructure;
 
-import com.example.auth.domain.User;
-import com.example.auth.domain.UserRepository;
+import com.ibanfr.auth.domain.User;
+import com.ibanfr.auth.domain.UserRepository;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 

@@ -1,7 +1,7 @@
-package com.example.auth.api;
+package com.ibanfr.auth.api;
 
-import com.example.auth.application.AuthService;
-import com.example.auth.application.LoginResult;
+import com.ibanfr.auth.application.AuthService;
+import com.ibanfr.auth.application.LoginResult;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
