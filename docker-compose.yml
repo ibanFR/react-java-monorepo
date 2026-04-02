@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - "8080:8080"
+    environment:
+      QUARKUS_DATASOURCE_DB_KIND: h2
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:h2:mem:authdb;DB_CLOSE_DELAY=-1"
+      QUARKUS_DATASOURCE_USERNAME: sa
+      QUARKUS_DATASOURCE_PASSWORD: ""
+      QUARKUS_HTTP_CORS: "true"
+      QUARKUS_HTTP_CORS_ORIGINS: "http://localhost:5173"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host"
+    depends_on:
+      backend:
+        condition: service_healthy
