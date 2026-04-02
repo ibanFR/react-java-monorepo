@@ -1,6 +1,6 @@
 ---
 title: Continuous Integration
-nav_order: 2
+parent: XP Concepts
 ---
 
 # Continuous Integration

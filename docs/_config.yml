@@ -1,5 +1,5 @@
-title: react-java-monorepo Documentation
-description: A full-stack enterprise application built with React (frontend) and Jakarta EE / Quarkus (backend), featuring a DDD-aligned persistence strategy
+title: Gauzeder
+description: A full-stack enterprise application built with React (frontend) and Jakarta EE / Quarkus (backend), featuring a DDD-aligned software architecture and a comprehensive set of functionalities, including user management, product catalog, shopping cart, and order processing.
 theme: just-the-docs
 
 url: https://github.com/ibanFR/react-java-monorepo
@@ -32,7 +32,7 @@ callouts:
     color: red
 
 collections:
-  explanation:
+  xp:
     output: true
 #  how-to:
 #    output: true
@@ -41,8 +41,8 @@ collections:
 
 just_the_docs:
   collections:
-    explanation:
-      name: Explanation
+    xp:
+      name: Extreme Programming (XP)
 #    reference:
 #      name: Reference
 #    how-to:
@@ -56,10 +56,10 @@ defaults:
     values:
       layout: default
 
-  # Explanation collection
+  # Extreme Programming (XP) collection
   - scope:
       path: ""
-      type: "explanation"
+      type: "xp"
     values:
       layout: default
 
