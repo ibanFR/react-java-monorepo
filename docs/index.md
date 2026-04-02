@@ -4,42 +4,45 @@ layout: home
 ---
 
 # {{ site.title }}
+
 {: .no_toc }
 
 {{ site.description }}.
 {: .fs-6 .fw-300 }
 
-
-Introduce and welcome users to the [Learning Hour], and provide a brief overview of what they can expect to find here.
+This project is a full-stack monorepo designed to provide a natural migration path from traditional Java EE (JSF/CDI)
+environments to modern, cloud-native development. It features a Quarkus-based backend (Java 21, REST, Hibernate, CDI)
+and a React + TypeScript frontend, prioritizing minimal learning curve, code reusability, and cloud-native principles.
 
 ## Table of Contents
+
 {: .no_toc .text-delta }
 
-1. TOC
+1. TOC 
 {:toc}
 
 ## Learning Goals 🎯
 
-Outline 1-3 learning goals for the Learning Hour. 
+1. Understand the architecture and design principles of a modern full-stack monorepo.
+2. Apply the [Agile Development Model](https://ibanfr.github.io/agile-development-model/master/) in a production-like environment.
+3. Gain hands-on experience with Quarkus, React, and TypeScript in a cohesive project.
 
-## Connect activity to get everyone thinking about the topic (⏱️ 5 min)
+---
 
-See [Connect Activities] in the [Samman Coaching] website for ideas on how to connect with your team and introduce the 
-topic of this Learning Hour.
+## 1. Understand the architecture and design principles of a modern full-stack monorepo
 
-## An explanation of a new Concept or a coding demo (⏱️ 5 min)
+Learn how the backend and frontend are organized, how modules interact, and how Domain-Driven Design (DDD) and
+cloud-native principles are applied to create scalable, maintainable enterprise applications.
 
-See the [Concept Activities] in the [Samman Coaching] website for ideas on how to introduce a new Concept or do a coding demo.
+## 2. Apply the Agile Development Model in a production-like environment
 
-## Concrete Practice in a coding exercise (⏱️ 20 min)
+Experience how agile practices are integrated into the development workflow, including iterative delivery, testing, and
+collaboration, using real-world tools and processes.
 
-See [Concrete Practice Activities] in the [Samman Coaching] website for ideas on how to design a coding exercise to practice the new Concept.
+## 3. Gain hands-on experience with Quarkus, React, and TypeScript in a cohesive project
 
-
-## Conclusions discussion and reflection (⏱️ 5 min)
-
-See [Conclusions Activities] in the [Samman Coaching] website for ideas on how to facilitate a discussion to reflect on 
-the learning experience and draw conclusions.
+Work directly with modern technologies: build REST APIs with Quarkus, create interactive UIs with React, and leverage
+TypeScript for type safety and maintainability across the stack.
 
 
 [Learning Hour]: https://sammancoaching.org/reference/learning_hour_definition.html
@@ -48,6 +51,3 @@ the learning experience and draw conclusions.
 [Concrete Practice Activities]: https://sammancoaching.org/activities/concrete.html
 [Conclusions Activities]: https://sammancoaching.org/activities/conclusions.html
 [Samman Coaching]: https://sammancoaching.org/
-
-
-
