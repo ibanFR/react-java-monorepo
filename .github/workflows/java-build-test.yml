@@ -4,12 +4,12 @@ on:
   push:
     branches: [ main, solution ]
     paths:
-      - 'java/**'
+      - 'backend/**'
       - '.github/workflows/java-build-test.yml'
   pull_request:
     branches: [ main, solution ]
     paths:
-      - 'java/**'
+      - 'backend/**'
 
 jobs:
   build:
@@ -30,13 +30,11 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B package
-        working-directory: java
-
+        working-directory: backend
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: java/target/surefire-reports/
-
+          path: backend/target/surefire-reports/
