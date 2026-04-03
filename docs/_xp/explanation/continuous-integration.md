@@ -1,6 +1,6 @@
 ---
 title: Continuous Integration
-nav_order: 2
+parent: XP Concepts
 ---
 
 # Continuous Integration
@@ -121,6 +121,19 @@ easier.
 
 The artifacts are stored by GitHub Actions and remain available for download from the workflow run page,
 typically for 90 days by default.
+
+## Frontend Build and Test Workflow
+
+A dedicated GitHub Actions workflow ensures the React frontend builds and passes all tests on every push and pull request. This workflow is defined in `.github/workflows/frontend-build-test.yml` and includes:
+
+- Checking out the repository
+- Setting up Node.js and caching dependencies
+- Installing dependencies with `npm ci`
+- Linting the code with `npm run lint`
+- Building the frontend with `npm run build`
+- Running all tests with `npm test`
+
+This helps maintain code quality and prevents broken builds from being merged.
 
 ## Pages workflow
 

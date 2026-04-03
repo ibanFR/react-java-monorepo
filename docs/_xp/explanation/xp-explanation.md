@@ -1,9 +1,9 @@
 ---
-title: Concept Explanation
+title: XP Concepts
 nav_order: 1
 ---
 
-# Concept Explanation
+# Extreme Programming (XP) Explanation
 {: .no_toc }
 
 Description for Concept Explanation.
