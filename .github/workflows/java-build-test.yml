@@ -14,17 +14,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java-version: ['25']
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK ${{ matrix.java-version }}
+      - name: Extract Java version from pom.xml
+        id: java-version
+        run: echo "version=$(mvn help:evaluate -Dexpression=maven.compiler.release -q -DforceStdout)" >> $GITHUB_OUTPUT
+        working-directory: backend
+
+      - name: Set up JDK ${{ steps.java-version.outputs.version }}
         uses: actions/setup-java@v5
         with:
-          java-version: ${{ matrix.java-version }}
+          java-version: ${{ steps.java-version.outputs.version }}
           distribution: 'temurin'
           cache: maven
 

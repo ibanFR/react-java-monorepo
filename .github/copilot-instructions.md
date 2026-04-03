@@ -7,7 +7,7 @@ This is a **full-stack monorepo** with three independent modules:
 | Directory | Stack | Purpose |
 |-----------|-------|---------|
 | `frontend/` | React 19 + TypeScript + Vite 8 | Single-page application (login UI) |
-| `backend/` | Java 17 + Quarkus 3.8 + Hibernate/Panache | REST API with DDD architecture |
+| `backend/` | Java 25 + Quarkus 3.34 + Hibernate/Panache | REST API with DDD architecture |
 | `docs/` | Jekyll (Ruby) + just-the-docs theme | GitHub Pages documentation site |
 
 The modules are **independently built and tested** — there is no root-level build system.
@@ -109,19 +109,12 @@ ESLint 9 flat config (`eslint.config.js`) with:
 
 | Workflow | File | Triggers | What it does |
 |----------|------|----------|-------------|
-| Java Build and Test | `.github/workflows/java-build-test.yml` | Push/PR to `main`/`solution` touching `backend/**` | Sets up JDK 25, runs `mvn -B package` in `backend/` |
+| Java Build and Test | `.github/workflows/java-build-test.yml` | Push/PR to `main`/`solution` touching `backend/**` | Reads Java version from `pom.xml` (`maven.compiler.release`), sets up JDK, runs `mvn -B package` in `backend/` |
 | Frontend Build and Test | `.github/workflows/frontend-build-test.yml` | Push/PR to `main`/`solution` touching `frontend/**` | Sets up Node.js, runs lint, build, and tests in `frontend/` |
 | Deploy Jekyll to Pages | `.github/workflows/pages.yml` | Push to `main` touching `docs/**` | Builds Jekyll site, deploys to GitHub Pages |
 
 ---
 
-## Known Issues and Workarounds
-
-### 1. CI uses JDK 25 while pom.xml targets Java 17
-
-The CI workflow (`java-build-test.yml`) uses `java-version: '25'` in its matrix, while `pom.xml` sets `maven.compiler.release=17`. This works because JDK 25 can compile Java 17 source, but be aware of this version mismatch when debugging CI issues.
-
----
 
 ## Docker
 
