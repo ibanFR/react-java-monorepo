@@ -109,26 +109,14 @@ ESLint 9 flat config (`eslint.config.js`) with:
 | Workflow | File | Triggers | What it does |
 |----------|------|----------|-------------|
 | Java Build and Test | `.github/workflows/java-build-test.yml` | Push/PR to `main`/`solution` touching `backend/**` | Sets up JDK 25, runs `mvn -B package` in `backend/` |
+| Frontend Build and Test | `.github/workflows/frontend-build-test.yml` | Push/PR to `main`/`solution` touching `frontend/**` | Sets up Node.js, runs lint, build, and tests in `frontend/` |
 | Deploy Jekyll to Pages | `.github/workflows/pages.yml` | Push to `main` touching `docs/**` | Builds Jekyll site, deploys to GitHub Pages |
-
-> **Note**: There is currently no CI workflow for the frontend. Lint and test the frontend locally.
 
 ---
 
 ## Known Issues and Workarounds
 
-### 1. Frontend `npm run build` fails with TypeScript errors
-
-**Symptom**: `tsc -b` reports errors like `Cannot find name 'describe'` in test files and `'test' does not exist in type 'UserConfigExport'` in `vite.config.ts`.
-
-**Root cause**: The `tsconfig.app.json` includes all of `src/` (which picks up `*.test.tsx` files), but does not include vitest type definitions. Additionally, `vite.config.ts` uses a `test` key that is only recognized when `vitest/config` types are loaded.
-
-**Workaround**: This is a pre-existing issue. Tests still pass via `npm test` (Vitest handles its own TypeScript compilation). The build failure only affects `npm run build`. When making changes:
-- Run `npm test` to validate test correctness.
-- Run `npm run lint` to validate code quality.
-- The `npm run build` command will fail on test files but this does not block development.
-
-### 2. CI uses JDK 25 while pom.xml targets Java 17
+### 1. CI uses JDK 25 while pom.xml targets Java 17
 
 The CI workflow (`java-build-test.yml`) uses `java-version: '25'` in its matrix, while `pom.xml` sets `maven.compiler.release=17`. This works because JDK 25 can compile Java 17 source, but be aware of this version mismatch when debugging CI issues.
 
