@@ -1,9 +1,9 @@
-package com.ibanfr.auth.api;
+package com.ibanfr.auth.infrastructure.adapters.in.rest;
 
 import jakarta.validation.constraints.NotBlank;
 
 /**
- * Data Transfer Object for login requests.
+ * Data Transfer Object for login requests received by the REST inbound adapter.
  */
 public class LoginRequest {
 
@@ -13,3 +13,4 @@ public class LoginRequest {
     @NotBlank
     public String password;
 }
+

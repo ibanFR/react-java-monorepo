@@ -52,13 +52,14 @@ All backend Java source is under `backend/src/main/java/com/ibanfr/auth/`:
 |-------|---------|------------|----------------|
 | **Domain** | `domain` | `User` (JPA entity), `UserRepository` (interface) | Aggregate root + repository port |
 | **Application** | `application` | `AuthService`, `LoginResult` | Use-case orchestration |
-| **Infrastructure** | `infrastructure` | `JpaUserRepository` | Panache adapter implementing `UserRepository` |
-| **API** | `api` | `AuthResource`, `LoginRequest` | JAX-RS REST endpoints at `/api/auth/` |
+| **Infrastructure** | `infrastructure.adapters.in.rest` | `AuthResource`, `LoginRequest` | JAX-RS primary (inbound) adapter at `/api/auth/` |
+| **Infrastructure** | `infrastructure.adapters.out.jpa` | `JpaUserRepository` | Panache secondary (outbound) adapter implementing `UserRepository` |
 
 **Key conventions:**
-- `UserRepository` is a domain interface (port); `JpaUserRepository` is the adapter.
+- `UserRepository` is a domain interface (port); `JpaUserRepository` is the secondary (outbound) adapter in `infrastructure.adapters.out.jpa`.
 - `LoginResult` is a value object returned by `AuthService.login()`.
-- `LoginRequest` is the API-layer DTO with `@NotBlank` validation.
+- `LoginRequest` is the REST-layer DTO with `@NotBlank` validation, located in `infrastructure.adapters.in.rest`.
+- `AuthResource` is the primary (inbound) adapter; it translates HTTP requests into application use-case calls.
 - The single REST endpoint is `POST /api/auth/login`.
 
 ### Database
@@ -145,7 +146,7 @@ This repository follows [Semantic Versioning (SemVer)](https://semver.org/) and 
 
 ### Public API (for SemVer purposes)
 
-- **Backend**: The public REST endpoints in `backend/src/main/java/com/ibanfr/*/api/` (e.g. `AuthResource.java`) and the DTOs they consume/produce (e.g. `LoginRequest.java`).
+- **Backend**: The public REST endpoints in `backend/src/main/java/com/ibanfr/*/infrastructure/adapters/in/rest/` (e.g. `AuthResource.java`) and the DTOs they consume/produce (e.g. `LoginRequest.java`).
 - **Frontend**: The public React page components and API client modules under `frontend/src/pages/` and `frontend/src/api/`.
 
 ### Commit Message Format
