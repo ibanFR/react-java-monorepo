@@ -1,4 +1,4 @@
-package com.ibanfr.auth.infrastructure;
+package com.ibanfr.auth.infrastructure.adapters.out.jpa;
 
 import com.ibanfr.auth.domain.User;
 import com.ibanfr.auth.domain.UserRepository;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 /**
  * JPA-backed implementation of the UserRepository domain interface.
- * Acts as the persistence adapter in the hexagonal architecture.
+ * Acts as a secondary (driven) outbound adapter in the hexagonal architecture.
  */
 @ApplicationScoped
 public class JpaUserRepository implements UserRepository, PanacheRepository<User> {
@@ -24,3 +24,4 @@ public class JpaUserRepository implements UserRepository, PanacheRepository<User
         persist(user);
     }
 }
+

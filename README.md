@@ -10,11 +10,13 @@ A full-stack enterprise application built with **React** (frontend) and **Jakart
 react-java-monorepo/
 ├── frontend/          # React + TypeScript + Vite single-page application
 ├── backend/           # Jakarta EE application (Quarkus runtime)
-│   └── src/main/java/com/example/auth/
-│       ├── domain/            # Domain layer: entities & repository interfaces
-│       ├── application/       # Application layer: use-case services
-│       ├── infrastructure/    # Infrastructure layer: JPA repository adapters
-│       └── api/               # REST resources (JAX-RS)
+│   └── src/main/java/com/ibanfr/auth/
+│       ├── domain/                        # Aggregate roots & repository interfaces (ports)
+│       ├── application/                   # Use-case services
+│       └── infrastructure/
+│           └── adapters/
+│               ├── in/rest/               # JAX-RS inbound adapter (primary)
+│               └── out/jpa/               # Panache outbound adapter (secondary)
 └── docker-compose.yml # Orchestrates both services for local development
 ```
 
@@ -26,7 +28,7 @@ Persistence follows the **Repository pattern** from Domain-Driven Design:
 |----------------|---------------------------|--------------------------------------------|
 | Domain         | `User`                    | Aggregate root; pure JPA entity            |
 | Domain         | `UserRepository` (interface) | Port — defines what the domain needs    |
-| Infrastructure | `JpaUserRepository`       | Adapter — Hibernate / Panache implementation |
+| Infrastructure | `JpaUserRepository`          | Outbound adapter — Hibernate / Panache implementation |
 
 **Development database**: H2 in-memory (zero-config, spun up on startup).  
 **Production database**: swap `quarkus.datasource.*` properties to point at PostgreSQL — no code changes required.
@@ -37,7 +39,7 @@ Persistence follows the **Repository pattern** from Domain-Driven Design:
 
 | Tool    | Version (minimum) | Install guide                                    |
 |---------|--------------------|--------------------------------------------------|
-| Java    | 17                 | https://adoptium.net/                            |
+| Java    | 25                 | https://adoptium.net/                            |
 | Maven   | 3.9                | https://maven.apache.org/install.html            |
 | Node.js | 22                 | https://nodejs.org/                              |
 | npm     | 10                 | bundled with Node.js                             |
@@ -143,12 +145,13 @@ npm test
 
 ### Backend (`backend/`)
 
-| Path                                        | Purpose                                      |
-|---------------------------------------------|----------------------------------------------|
-| `domain/User.java`                          | User aggregate root (JPA entity)             |
-| `domain/UserRepository.java`                | Repository port (interface)                  |
-| `infrastructure/JpaUserRepository.java`     | Panache JPA repository adapter               |
-| `application/AuthService.java`              | Login use-case orchestration                 |
-| `api/AuthResource.java`                     | JAX-RS REST resource                         |
-| `resources/application.properties`         | Quarkus configuration                        |
-| `resources/import.sql`                      | Development seed data                        |
+| Path                                                         | Purpose                                      |
+|--------------------------------------------------------------|----------------------------------------------|
+| `domain/User.java`                                           | User aggregate root (JPA entity)             |
+| `domain/UserRepository.java`                                 | Repository port (interface)                  |
+| `infrastructure/adapters/out/jpa/JpaUserRepository.java`     | Panache JPA outbound adapter                 |
+| `application/AuthService.java`                               | Login use-case orchestration                 |
+| `infrastructure/adapters/in/rest/AuthResource.java`          | JAX-RS inbound adapter                       |
+| `infrastructure/adapters/in/rest/LoginRequest.java`          | REST request DTO                             |
+| `resources/application.properties`                          | Quarkus configuration                        |
+| `resources/import.sql`                                       | Development seed data                        |

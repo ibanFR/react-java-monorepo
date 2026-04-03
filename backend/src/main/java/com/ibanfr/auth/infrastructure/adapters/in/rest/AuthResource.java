@@ -1,4 +1,4 @@
-package com.ibanfr.auth.api;
+package com.ibanfr.auth.infrastructure.adapters.in.rest;
 
 import com.ibanfr.auth.application.AuthService;
 import com.ibanfr.auth.application.LoginResult;
@@ -12,7 +12,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 /**
- * REST resource exposing the authentication API.
+ * JAX-RS inbound adapter exposing the authentication use-case over HTTP.
+ * Acts as a primary (driving) adapter in the hexagonal architecture.
  */
 @Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -37,3 +38,4 @@ public class AuthResource {
     public record LoginResponse(String message) {
     }
 }
+
