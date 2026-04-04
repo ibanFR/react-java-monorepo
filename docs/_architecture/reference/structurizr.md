@@ -85,7 +85,7 @@ workspace "react-java-monorepo" "Authentication monorepo – React SPA + Quarkus
 
 ## Running Structurizr Lite Locally
 
-Structurizr Lite is included as a service in `docker-compose.yml`. It is available on port **8081** to avoid conflicting with the Quarkus API on port 8080.
+Structurizr Lite is included as a service in `docker-compose.yml`. It is available on port **8090** to avoid conflicting with the Quarkus API on port 8080 and the Quarkus test HTTP port on port 8081.
 
 ### Start only Structurizr
 
@@ -93,7 +93,7 @@ Structurizr Lite is included as a service in `docker-compose.yml`. It is availab
 docker compose up structurizr
 ```
 
-Open [http://localhost:8081](http://localhost:8081) in your browser.
+Open [http://localhost:8090](http://localhost:8090) in your browser.
 
 ### Start the full stack (backend + frontend + Structurizr)
 
@@ -108,15 +108,15 @@ docker compose up
 |---|---|
 | React SPA | http://localhost:5173 |
 | Quarkus API | http://localhost:8080 |
-| Structurizr Lite | http://localhost:8081 |
+| Structurizr Lite | http://localhost:8090 |
 
 ### Useful Structurizr Lite URLs
 
 | Page | URL |
 |---|---|
-| Diagrams | http://localhost:8081/workspace/diagrams |
-| Documentation | http://localhost:8081/workspace/documentation |
-| Decisions (ADRs) | http://localhost:8081/workspace/decisions |
+| Diagrams | http://localhost:8090/workspace/diagrams |
+| Documentation | http://localhost:8090/workspace/documentation |
+| Decisions (ADRs) | http://localhost:8090/workspace/decisions |
 
 ### Without Docker
 
