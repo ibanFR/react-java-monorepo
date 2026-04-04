@@ -24,12 +24,12 @@ Then('I should see a sign in button', async function () {
 
 When('I type {string} in the username field', async function (value) {
   assert(this.page)
-  await this.page.fill(selectors.usernameInput, value)
+  await this.page.locator(selectors.usernameInput).fill(value)
 })
 
 When('I type {string} in the password field', async function (value) {
   assert(this.page)
-  await this.page.fill(selectors.passwordInput, value)
+  await this.page.locator(selectors.passwordInput).fill(value)
 })
 
 Then('the username field should contain {string}', async function (expected) {
