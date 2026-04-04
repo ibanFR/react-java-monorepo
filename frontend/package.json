@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:bdd": "TSX_TSCONFIG_PATH=./tsconfig.app.json node --import tsx/esm --import ./src/features/support/css-loader.mjs ./node_modules/@cucumber/cucumber/bin/cucumber.js"
   },
   "dependencies": {
     "react": "^19.2.4",
@@ -18,6 +19,7 @@
     "node": ">=22"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
     "@eslint/js": "^9.39.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -31,6 +33,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1",
