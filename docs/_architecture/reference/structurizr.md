@@ -1,0 +1,170 @@
+---
+title: Structurizr
+parent: Architecture Reference
+---
+
+# Structurizr for Architecture Documentation
+{: .no_toc }
+
+Research findings, recommended workspace folder structure, and open-source examples for adopting Structurizr Lite in this monorepo.
+{: .fs-6 .fw-300 }
+
+---
+
+## Table of Contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## What is Structurizr?
+
+[Structurizr](https://structurizr.com/) is a set of tooling for creating software architecture diagrams and documentation based on the [C4 model](https://c4model.com/). Rather than drawing diagrams by hand, you define a single architecture **model** in the [Structurizr DSL](https://github.com/structurizr/dsl) and Structurizr generates multiple views (diagrams) from it automatically.
+
+**Structurizr Lite** is the self-hosted, free version. It reads a `workspace.dsl` file from a local directory and provides a browser-based UI for viewing and editing diagrams.
+
+Reference: [https://docs.structurizr.com/local/quickstart](https://docs.structurizr.com/local/quickstart)
+
+---
+
+## Recommended Folder Structure for This Monorepo
+
+This monorepo already has a `docs/` directory for the Jekyll-based documentation site. The recommended approach is to add a dedicated `architecture/` directory at the **repo root** to keep the Structurizr workspace self-contained and runnable independently from the Jekyll site.
+
+```
+react-java-monorepo/
+├── backend/                        # Java / Quarkus API
+├── frontend/                       # React / Vite SPA
+├── docs/                           # Jekyll documentation site
+│   └── _architecture/
+│       └── reference/
+│           └── structurizr.md      # ← this file
+├── architecture/                   # Structurizr workspace (NEW)
+│   ├── workspace.dsl               # Main entry point (required by Structurizr Lite)
+│   ├── model.dsl                   # !include – people, systems, containers, components
+│   ├── views.dsl                   # !include – system context, container, component views
+│   ├── styles.dsl                  # !include – element / relationship styles & themes
+│   ├── decisions/                  # Architecture Decision Records (ADRs)
+│   │   ├── 0001-use-quarkus.md
+│   │   └── 0002-use-react-vite.md
+│   └── docs/                       # Supplementary Markdown documentation
+│       ├── 01-context.md
+│       └── 02-containers.md
+├── docker-compose.yml
+└── README.md
+```
+
+### Key design decisions
+
+| Decision | Rationale |
+|---|---|
+| Top-level `architecture/` directory | Keeps Structurizr workspace isolated from the Jekyll site and from source code. Structurizr Lite expects a single directory to mount. |
+| Split `workspace.dsl` into `model.dsl`, `views.dsl`, `styles.dsl` via `!include` | Follows the DSL best practice of separating concerns; each file has a single responsibility and stays readable as the model grows. |
+| `decisions/` inside `architecture/` | ADRs are referenced directly from the DSL (`!adrs`) so Structurizr Lite can render them alongside diagrams. |
+| `docs/` inside `architecture/` | Supplementary Markdown sections are referenced from the DSL (`!docs`) for inline documentation in the Structurizr UI. |
+
+### Minimal `workspace.dsl` example
+
+```dsl
+workspace "react-java-monorepo" "Authentication monorepo – React SPA + Quarkus API" {
+
+    !adrs decisions
+    !docs docs
+
+    !include model.dsl
+    !include views.dsl
+    !include styles.dsl
+}
+```
+
+### Running Structurizr Lite locally
+
+Add this service to `docker-compose.yml`:
+
+```yaml
+structurizr:
+  image: structurizr/lite:latest
+  ports:
+    - "8080:8080"
+  volumes:
+    - ./architecture:/usr/local/structurizr
+```
+
+Then open [http://localhost:8080](http://localhost:8080) after running `docker compose up structurizr`.
+
+---
+
+## Open-Source Examples on GitHub
+
+The following open-source projects demonstrate Structurizr DSL usage in different contexts.
+
+### 1. masad – Minimal Approach to Software Architecture Documentation
+
+- **Repo:** [max-arshinov/masad](https://github.com/max-arshinov/masad) ⭐ 88
+- **What it shows:** A concrete implementation of Simon Brown's "minimal approach" combining Structurizr Lite + Arc42 + ADR Tools. The workspace is split across `workspace.dsl`, `model.dsl`, `views.dsl`, and `archetypes.dsl` using `!include`. Multiple workspaces coexist in the same repo (`baseline/`, `target/`, `copilot/`).
+- **Notable pattern:** Each workspace lives in its own subfolder with its own `workspace.dsl`, making it easy to evolve the architecture model alongside the code.
+
+```
+masad/
+├── baseline/
+│   ├── workspace.dsl
+│   ├── model.dsl
+│   ├── views.dsl
+│   ├── archetypes.dsl
+│   └── adrs/
+├── target/
+│   └── workspace.dsl
+├── copilot/
+│   └── workspace.dsl
+└── docker-compose.yml
+```
+
+### 2. arc42-c4-software-architecture-documentation-example
+
+- **Repo:** [bitsmuggler/arc42-c4-software-architecture-documentation-example](https://github.com/bitsmuggler/arc42-c4-software-architecture-documentation-example) ⭐ 190
+- **What it shows:** Combines the Arc42 documentation template with Structurizr DSL and ADRs in a `documentation/` folder. The DSL file (`bank.dsl`) embeds `!docs` and `!adrs` references to pull in Arc42 sections and decision records into the Structurizr UI.
+- **Notable pattern:** Architecture artefacts (DSL, docs, ADRs) are co-located in a single `documentation/` directory, keeping them close together.
+
+```
+arc42-c4-software-architecture-documentation-example/
+└── documentation/
+    ├── bank.dsl
+    ├── arc42/          # Arc42 Markdown sections
+    ├── adrs/           # Architecture Decision Records
+    └── tdrs/           # Technical Design Records
+```
+
+### 3. structurizr-site-generatr
+
+- **Repo:** [avisi-cloud/structurizr-site-generatr](https://github.com/avisi-cloud/structurizr-site-generatr) ⭐ 316
+- **What it shows:** A static site generator (Kotlin/Gradle) that reads a Structurizr DSL workspace and produces a full documentation website with diagrams, decision records, and markdown pages. Useful when the goal is to publish architecture as a standalone site (similar to the existing Jekyll docs site in this repo).
+- **Notable pattern:** Demonstrates how Structurizr models can be the source for a published documentation site, not just a local viewer.
+
+### 4. goadesign/model
+
+- **Repo:** [goadesign/model](https://github.com/goadesign/model) ⭐ 456
+- **What it shows:** An alternative Go-based DSL for C4 models that generates Structurizr-compatible workspaces. Useful as a reference for how C4 model concepts map to DSL elements, even if using the official Structurizr DSL.
+
+---
+
+## Comparison of Workspace Organisation Patterns
+
+| Pattern | Example | Best for |
+|---|---|---|
+| Single flat `workspace.dsl` | Most tutorials | Small projects, getting started |
+| Split by concern (`model.dsl`, `views.dsl`, `styles.dsl`) | masad, this recommendation | Medium–large projects, team collaboration |
+| Architecture in `documentation/` subfolder | bitsmuggler example | Projects combining Arc42 + ADR + DSL |
+| Architecture as a standalone repo | Enterprise multi-team setups | When multiple teams share the same architecture model |
+| Generated documentation site | structurizr-site-generatr | When architecture docs are published as a website |
+
+---
+
+## References
+
+- [Structurizr Lite Quickstart](https://docs.structurizr.com/local/quickstart)
+- [Structurizr DSL Language Reference](https://github.com/structurizr/dsl/blob/master/docs/language-reference.md)
+- [C4 Model](https://c4model.com/)
+- [Simon Brown – A Minimal Approach to Software Architecture Documentation](https://dev.to/simonbrown/a-minimal-approach-to-software-architecture-documentation-4k6k)
+- [Getting Started with Structurizr Lite](https://dev.to/simonbrown/getting-started-with-structurizr-lite-27d0)
