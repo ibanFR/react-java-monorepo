@@ -10,7 +10,7 @@ React 19 + TypeScript + Vite frontend for the authentication UI.
 ## Install
 
 ```bash
-cd /home/runner/work/react-java-monorepo/react-java-monorepo/frontend
+cd frontend
 npm ci
 ```
 

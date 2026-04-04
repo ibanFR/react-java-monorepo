@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { Given, When, Then } from '@cucumber/cucumber'
-import { appBaseUrl } from '../utils/config.js'
+import { appBaseUrl, NAVIGATION_TIMEOUT_MS } from '../utils/config.js'
 import { selectors } from '../utils/selectors.js'
 
 Given('I open the login page', async function () {
   assert(this.page, 'Expected Playwright page to be initialized')
-  await this.page.goto(appBaseUrl(), { waitUntil: 'networkidle', timeout: 30_000 })
+  await this.page.goto(appBaseUrl(), { waitUntil: 'networkidle', timeout: NAVIGATION_TIMEOUT_MS })
 })
 
 Then('I should see a {string} heading', async function (headingText) {

@@ -8,9 +8,9 @@ function sanitizeName(name) {
 }
 
 Before(async function ({ pickle }) {
-  const safeName = sanitizeName(pickle.name)
+  const sanitizedScenarioName = sanitizeName(pickle.name)
   const timestamp = Date.now()
-  this.artifactBaseName = `${safeName}-${timestamp}`
+  this.artifactBaseName = `${sanitizedScenarioName}-${timestamp}`
 
   await mkdir('test-artifacts/screenshots', { recursive: true })
   await mkdir('test-artifacts/traces', { recursive: true })

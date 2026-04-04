@@ -1,3 +1,5 @@
+import { CUCUMBER_STEP_TIMEOUT_MS } from './features/utils/config.js'
+
 export default {
   default: {
     paths: ['features/**/*.feature'],
@@ -8,7 +10,7 @@ export default {
       'junit:reports/cucumber/junit.xml',
     ],
     publishQuiet: true,
-    timeout: 60_000,
+    timeout: CUCUMBER_STEP_TIMEOUT_MS,
     parallel: 1,
   },
 }
