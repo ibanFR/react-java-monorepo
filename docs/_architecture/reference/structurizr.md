@@ -29,27 +29,29 @@ Reference: [https://docs.structurizr.com/local/quickstart](https://docs.structur
 
 ---
 
-## Recommended Folder Structure for This Monorepo
+## Folder Structure
 
-This monorepo already has a `docs/` directory for the Jekyll-based documentation site. The recommended approach is to add a dedicated `architecture/` directory at the **repo root** to keep the Structurizr workspace self-contained and runnable independently from the Jekyll site.
+This monorepo already has a `docs/` directory for the Jekyll-based documentation site. The Structurizr workspace lives in a separate top-level `architecture/` directory to keep it self-contained and mountable as a single Docker volume without coupling to the Jekyll site.
+
+The supplementary Markdown folder inside the workspace is named `supplementary/` (not `docs/`) to avoid any ambiguity with the site's `docs/` directory.
 
 ```
 react-java-monorepo/
-├── backend/                        # Java / Quarkus API
-├── frontend/                       # React / Vite SPA
-├── docs/                           # Jekyll documentation site
+├── backend/                           # Java / Quarkus API
+├── frontend/                          # React / Vite SPA
+├── docs/                              # Jekyll documentation site
 │   └── _architecture/
 │       └── reference/
-│           └── structurizr.md      # ← this file
-├── architecture/                   # Structurizr workspace (NEW)
-│   ├── workspace.dsl               # Main entry point (required by Structurizr Lite)
-│   ├── model.dsl                   # !include – people, systems, containers, components
-│   ├── views.dsl                   # !include – system context, container, component views
-│   ├── styles.dsl                  # !include – element / relationship styles & themes
-│   ├── decisions/                  # Architecture Decision Records (ADRs)
+│           └── structurizr.md         # ← this file
+├── architecture/                      # Structurizr workspace
+│   ├── workspace.dsl                  # Main entry point (required by Structurizr Lite)
+│   ├── model.dsl                      # !include – people, systems, containers, components
+│   ├── views.dsl                      # !include – system context, container, component views
+│   ├── styles.dsl                     # !include – element / relationship styles & themes
+│   ├── decisions/                     # Architecture Decision Records (ADRs)
 │   │   ├── 0001-use-quarkus.md
 │   │   └── 0002-use-react-vite.md
-│   └── docs/                       # Supplementary Markdown documentation
+│   └── supplementary/                 # Supplementary Markdown documentation
 │       ├── 01-context.md
 │       └── 02-containers.md
 ├── docker-compose.yml
@@ -63,15 +65,15 @@ react-java-monorepo/
 | Top-level `architecture/` directory | Keeps Structurizr workspace isolated from the Jekyll site and from source code. Structurizr Lite expects a single directory to mount. |
 | Split `workspace.dsl` into `model.dsl`, `views.dsl`, `styles.dsl` via `!include` | Follows the DSL best practice of separating concerns; each file has a single responsibility and stays readable as the model grows. |
 | `decisions/` inside `architecture/` | ADRs are referenced directly from the DSL (`!adrs`) so Structurizr Lite can render them alongside diagrams. |
-| `docs/` inside `architecture/` | Supplementary Markdown sections are referenced from the DSL (`!docs`) for inline documentation in the Structurizr UI. |
+| `supplementary/` instead of `docs/` | Supplementary Markdown sections for the Structurizr UI (`!docs`) are stored under `supplementary/` to avoid confusion with the repo's `docs/` Jekyll site. |
 
-### Minimal `workspace.dsl` example
+### `workspace.dsl`
 
 ```dsl
 workspace "react-java-monorepo" "Authentication monorepo – React SPA + Quarkus API" {
 
     !adrs decisions
-    !docs docs
+    !docs supplementary
 
     !include model.dsl
     !include views.dsl
@@ -79,20 +81,57 @@ workspace "react-java-monorepo" "Authentication monorepo – React SPA + Quarkus
 }
 ```
 
-### Running Structurizr Lite locally
+---
 
-Add this service to `docker-compose.yml`:
+## Running Structurizr Lite Locally
 
-```yaml
-structurizr:
-  image: structurizr/lite:latest
-  ports:
-    - "8080:8080"
-  volumes:
-    - ./architecture:/usr/local/structurizr
+Structurizr Lite is included as a service in `docker-compose.yml`. It is available on port **8081** to avoid conflicting with the Quarkus API on port 8080.
+
+### Start only Structurizr
+
+```bash
+docker compose up structurizr
 ```
 
-Then open [http://localhost:8080](http://localhost:8080) after running `docker compose up structurizr`.
+Open [http://localhost:8081](http://localhost:8081) in your browser.
+
+### Start the full stack (backend + frontend + Structurizr)
+
+```bash
+# Build the backend JAR first (required for the backend Docker image)
+cd backend && mvn package -DskipTests && cd ..
+
+docker compose up
+```
+
+| Service | URL |
+|---|---|
+| React SPA | http://localhost:5173 |
+| Quarkus API | http://localhost:8080 |
+| Structurizr Lite | http://localhost:8081 |
+
+### Useful Structurizr Lite URLs
+
+| Page | URL |
+|---|---|
+| Diagrams | http://localhost:8081/workspace/diagrams |
+| Documentation | http://localhost:8081/workspace/documentation |
+| Decisions (ADRs) | http://localhost:8081/workspace/decisions |
+
+### Without Docker
+
+If you have Java 17+ available locally, you can run Structurizr Lite as a standalone JAR:
+
+```bash
+# Download the latest release
+curl -L -o /tmp/structurizr-lite.jar \
+  https://github.com/structurizr/lite/releases/latest/download/structurizr-lite.jar
+
+# Run it, pointing at the architecture directory
+java -jar /tmp/structurizr-lite.jar ./architecture
+```
+
+Then open [http://localhost:8080](http://localhost:8080).
 
 ---
 
