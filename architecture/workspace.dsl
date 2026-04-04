@@ -5,6 +5,5 @@ workspace "react-java-monorepo" "Authentication monorepo – React SPA + Quarkus
 
     !include model.dsl
     !include views.dsl
-    !include styles.dsl
 
 }

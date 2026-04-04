@@ -15,4 +15,6 @@ views {
         autolayout lr
     }
 
+    !include styles.dsl
+
 }

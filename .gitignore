@@ -12,3 +12,7 @@ frontend/.vite/
 # Jekyll build and cache
 /docs/_site/
 /docs/.jekyll-cache/
+
+# Structurizr Lite local output (diagrams, workspace state, Lucene index)
+architecture/.structurizr/
+architecture/workspace.json
