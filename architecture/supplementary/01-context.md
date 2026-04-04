@@ -1,17 +1,17 @@
-# 01 – System Context
+## System Context
 
-## Purpose
+### Purpose
 
 This monorepo implements a full-stack **authentication system** composed of two independently deployable services:
 
 - **React SPA** – a browser-based login interface built with React 19 + Vite.
 - **Quarkus API** – a REST API that validates credentials and returns an authentication result.
 
-## Users
+### Users
 
 A single external actor interacts with the system: the **User**, who opens the login page in a browser, enters their credentials, and receives either a success or an error response.
 
-## External Dependencies
+### External Dependencies
 
 | Dependency | Role |
 |---|---|

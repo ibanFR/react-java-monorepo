@@ -1,6 +1,6 @@
-# 02 – Containers
+## Containers
 
-## React SPA
+### React SPA
 
 The Single-Page Application is a pure client-side app. It renders a login form and sends a `POST /api/auth/login` request to the Quarkus API when the user submits their credentials.
 
@@ -9,7 +9,7 @@ Technology choices:
 - **TypeScript** – type safety
 - **Vite** – development server and production bundler
 
-## Quarkus API
+### Quarkus API
 
 The REST API exposes a single endpoint and implements the login use-case using a layered hexagonal (ports-and-adapters) architecture:
 
@@ -20,7 +20,7 @@ The REST API exposes a single endpoint and implements the login use-case using a
 | Domain port | `UserRepository` | Interface defining what persistence the domain needs |
 | Outbound adapter | `JpaUserRepository` | Panache/Hibernate implementation of `UserRepository` |
 
-## Database
+### Database
 
 - **Development / test**: H2 in-memory database, auto-created on startup from `import.sql`.
 - **Production**: PostgreSQL — swap `quarkus.datasource.*` properties, no code changes required.

@@ -1,6 +1,6 @@
-# 03 – Transport Security (Future Iteration)
+## Transport Security (Future Iteration)
 
-## Current State
+### Current State
 
 All communication between the browser, the React SPA, and the Quarkus API currently travels over **plain HTTP** in both local development and the Docker Compose stack. No TLS termination is configured in the backend (`quarkus.http.ssl.*` is absent from `application.properties`) and the Docker Compose service does not expose an HTTPS port.
 
@@ -8,9 +8,9 @@ The `POST /api/auth/login` request body carries a username and password in plain
 
 ---
 
-## Plan
+### Plan
 
-### Phase 1 – TLS in Production (Reverse Proxy)
+#### Phase 1 – TLS in Production (Reverse Proxy)
 
 Terminate TLS at a reverse proxy or load balancer that sits in front of the Quarkus API container. The Quarkus service itself continues to listen on HTTP internally; HTTPS is enforced externally.
 
@@ -31,7 +31,7 @@ No changes to Quarkus source code are required for this phase.
 
 ---
 
-### Phase 2 – TLS Directly on Quarkus (Optional / Defence-in-Depth)
+#### Phase 2 – TLS Directly on Quarkus (Optional / Defence-in-Depth)
 
 If end-to-end encryption between the proxy and the backend is required (e.g., mutual TLS inside a service mesh), configure Quarkus to serve HTTPS natively.
 
@@ -64,7 +64,7 @@ Store `KEYSTORE_PASSWORD` in a secrets manager or `.env` file that is excluded f
 
 ---
 
-### Phase 3 – React SPA Hardening
+#### Phase 3 – React SPA Hardening
 
 Once the API serves HTTPS:
 
@@ -75,7 +75,7 @@ Once the API serves HTTPS:
 
 ---
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 | # | Criterion |
 |---|---|
@@ -88,7 +88,7 @@ Once the API serves HTTPS:
 
 ---
 
-## Related
+### Related
 
 - ADR `0001-use-quarkus.md` — Quarkus was chosen partly for its native Quarkus Extensions ecosystem, which includes `quarkus-tls-registry` for certificate management.
 - [Quarkus TLS documentation](https://quarkus.io/guides/tls-registry-reference)
