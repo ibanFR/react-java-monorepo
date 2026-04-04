@@ -12,14 +12,14 @@ Then('I should see a {string} heading', async function (headingText) {
   assert(this.page)
   const heading = this.page.locator(selectors.heading)
   await heading.waitFor({ state: 'visible' })
-  await assert.doesNotReject(() => heading.getByText(headingText, { exact: true }).waitFor())
+  await assert.equal(await heading.innerText(), headingText)
 })
 
 Then('I should see a sign in button', async function () {
   assert(this.page)
   const button = this.page.locator(selectors.submitButton)
   await button.waitFor({ state: 'visible' })
-  await assert.doesNotReject(() => button.getByText('Sign in', { exact: true }).waitFor())
+  await assert.equal(await button.innerText(), 'Sign in')
 })
 
 When('I type {string} in the username field', async function (value) {
@@ -34,12 +34,12 @@ When('I type {string} in the password field', async function (value) {
 
 Then('the username field should contain {string}', async function (expected) {
   assert(this.page)
-  await assert.doesNotReject(() => this.page.waitForSelector(`${selectors.usernameInput}[value="${expected}"]`))
+  await assert.equal(await this.page.inputValue(selectors.usernameInput), expected)
 })
 
 Then('the password field should contain {string}', async function (expected) {
   assert(this.page)
-  await assert.doesNotReject(() => this.page.waitForSelector(`${selectors.passwordInput}[value="${expected}"]`))
+  await assert.equal(await this.page.inputValue(selectors.passwordInput), expected)
 })
 
 Then('I should not see an alert message', async function () {
