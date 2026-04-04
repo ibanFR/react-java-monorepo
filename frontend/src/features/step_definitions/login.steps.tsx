@@ -1,11 +1,10 @@
-import React from 'react'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { render } from '@testing-library/react'
 import { LoginPage } from '../../pages/LoginPage'
 import type { LoginWorld } from '../support/world'
 
 Given('I open the login page', function (this: LoginWorld) {
-  this.renderResult = render(React.createElement(LoginPage))
+  this.renderResult = render(<LoginPage />)
 })
 
 // ── Positive assertions ─────────────────────────────────────────────────────

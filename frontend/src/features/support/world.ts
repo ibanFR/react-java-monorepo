@@ -44,7 +44,7 @@ installGlobal('cancelAnimationFrame', jsdomWindow.cancelAnimationFrame.bind(jsdo
 installGlobal('IS_REACT_ACT_ENVIRONMENT', true)
 
 export class LoginWorld extends World {
-  renderResult!: RenderResult
+  renderResult?: RenderResult
   user!: UserEvent
 
   constructor(options: IWorldOptions) {
