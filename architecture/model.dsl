@@ -13,8 +13,7 @@ model {
 
             restAdapter = component "AuthResource" "JAX-RS inbound adapter. Exposes POST /api/auth/login." "JAX-RS"
             authService = component "AuthService" "Login use-case orchestration." "CDI Bean"
-            userRepo    = component "UserRepository" "Domain port (interface) for user persistence." "Interface"
-            jpaAdapter  = component "JpaUserRepository" "Panache outbound adapter implementing UserRepository." "Panache"
+            userRepo = component "UserRepository" "Domain repository (JPA/Panache implementation)." "JPA/Panache"
         }
 
         db = container "H2 / PostgreSQL" "Stores user credentials. H2 in-memory for dev/test; PostgreSQL for production." "RDBMS" {
@@ -23,11 +22,10 @@ model {
     }
 
     user -> spa "Opens login page in browser"
-    spa  -> api "POST /api/auth/login" "JSON / HTTPS"
+    spa  -> restAdapter "Invokes REST endpoint /api/auth/login" "JSON / HTTPS"
 
     restAdapter -> authService "Delegates login use-case"
     authService -> userRepo   "Looks up user by username"
-    userRepo    -> jpaAdapter "Implemented by"
-    jpaAdapter  -> db         "Reads from and writes to" "JDBC"
+    userRepo    -> db         "Reads from and writes to" "JDBC"
 
 }
