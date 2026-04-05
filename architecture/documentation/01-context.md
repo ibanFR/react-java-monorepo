@@ -9,13 +9,15 @@ This monorepo implements a full-stack **authentication system** composed of two 
 
 ### Users
 
-A single external actor interacts with the system: the **User**, who opens the login page in a browser, enters their credentials, and receives either a success or an error response.
+A single external actor interacts with the system: the **User**, who opens the login page in a browser, enters their
+credentials, and receives either a success or an error response.
 
 ### External Dependencies
 
-| Dependency | Role |
-|---|---|
-| Browser | Renders and runs the React SPA |
-| H2 (dev) / PostgreSQL (prod) | Stores user credentials |
+| Dependency                   | Role                           |
+|------------------------------|--------------------------------|
+| Browser                      | Renders and runs the React SPA |
+| H2 (dev) / PostgreSQL (prod) | Stores user credentials        |
 
-The system has no external identity provider in the current scope; authentication is handled internally by the Quarkus API against the application database.
+The system has no external identity provider in the current scope; authentication is handled internally by the Quarkus
+API against the application database.
