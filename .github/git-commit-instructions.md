@@ -29,38 +29,59 @@ This repository follows [Semantic Versioning (SemVer)](https://semver.org/) and 
 
 #### Type
 
-| Type         | Description                                                                                                                     |
-|--------------|---------------------------------------------------------------------------------------------------------------------------------|
-| **feat**     | A new feature                                                                                                                   |
-| **fix**      | A bug fix                                                                                                                       |
-| **refactor** | A behavior preserving change (neither fixes a bug nor adds a feature)                                                           |
-| **test**     | Adding new tests or refactoring existing ones                                                                                   |
-| **docs**     | Documentation only changes                                                                                                      |
-| **build**    | Changes that affect the build system or external dependencies (`pom.xml`, `package.json`, `docker-compose.yml`)                 |
-| **ci**       | Changes to CI configuration files and scripts (`.github/workflows/java-build-test.yml`, `.github/workflows/pages.yml`)          |
+Use **`feat`**, **`fix`**, or **`refactor`** only when **production code** is changed. Production code is anything built and shipped to users:
+- Java sources under `backend/src/main/java/`
+- TypeScript sources under `frontend/src/` (excluding test files)
+
+For all other changes, use the most specific type below:
+
+| Type         | Description                                                                                                                                          |
+|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **feat**     | A new feature — **production code only**                                                                                                             |
+| **fix**      | A bug fix — **production code only**                                                                                                                 |
+| **refactor** | A behavior-preserving change — **production code only** (neither fixes a bug nor adds a feature)                                                     |
+| **test**     | Adding or updating tests (use for any test file change, e.g. `LoginPage.test.tsx`, `AuthResourceTest.java`)                                          |
+| **docs**     | Documentation only changes                                                                                                                           |
+| **build**    | Changes that affect the build system or external dependencies (`pom.xml`, `package.json`, `docker-compose.yml`)                                      |
+| **ci**       | Changes to CI configuration files and scripts (`.github/workflows/java-build-test.yml`, `.github/workflows/pages.yml`)                               |
 
 #### Summary
 
 - Use the imperative, present tense: "change" not "changed" nor "changes"
 - Don't capitalize the first letter
 - No dot (.) at the end
+- **Include filenames in the summary when relevant**
+  - Prefer: `docs: improve formatting in 01-context.md and 02-containers.md`
+  - Over: `docs: improve formatting in context and containers documentation`
+  - Prefer: `test: add edge case coverage in LoginPage.test.tsx`
+  - Over: `test: add edge case coverage in login page tests`
 
-### Commit Message Body (Optional)
+### Commit Message Body
 
-The body should explain the motivation for the change:
+**Always include a commit message body.** Use bullet points to explain the change:
 
-* **What changed:** Describe the specific modifications made to the codebase
-* **Why it changed:** Explain the business or technical reason for this change
-* **How it impacts the system:** Detail any affected modules, layers, or functionality
-* **Related decisions:** Reference any architectural decisions (ADRs) or important design choices
+- **What changed:** Describe the specific modifications made to the codebase — **include the filename(s)** in each 
+bullet point when relevant
+- **Why it changed:** Explain the business or technical reason for this change
+- **How it impacts the system:** Detail any affected modules, layers, or functionality
+- **Related decisions:** Reference any architectural decisions (ADRs) or important design choices
 
-**Example:**
+**Example — prefer (filenames in body bullets):**
 
 ```
-refactor: extract auth API client into dedicated module
+docs: improve formatting in 01-context.md and 02-containers.md
 
-* Moved fetch logic out of LoginPage into src/api/auth.ts
-* Introduced AuthError class to distinguish API errors from network failures
-* LoginPage now depends on the auth module, not on fetch directly
-* Improves testability — auth module can be mocked independently in component tests
+* Adjusted line breaks for better readability in user and dependency sections in 01-context.md
+* Enhanced table formatting for clarity in 02-containers.md
+* Aims to provide a more consistent and user-friendly documentation experience
+```
+
+**Instead of (no filenames in body bullets):**
+
+```
+docs: improve formatting in 01-context.md and 02-containers.md
+
+* Adjusted line breaks for better readability in user and dependency sections
+* Enhanced table formatting for clarity in containers documentation
+* Aims to provide a more consistent and user-friendly documentation experience
 ```
