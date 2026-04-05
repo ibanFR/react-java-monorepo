@@ -38,6 +38,8 @@ collections:
     output: true
   architecture:
     output: true
+  lean:
+    output: true
 
 
 just_the_docs:
@@ -48,6 +50,8 @@ just_the_docs:
       name: Architecture
     align:
       name: Align
+    lean:
+      name: Lean
 
 defaults:
   # All regular Jekyll pages
@@ -75,5 +79,12 @@ defaults:
   - scope:
       path: ""
       type: "xp"
+    values:
+      layout: default
+
+  # Lean collection
+  - scope:
+      path: ""
+      type: "lean"
     values:
       layout: default
