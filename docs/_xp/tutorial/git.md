@@ -1,5 +1,5 @@
 ---
-title: Automatically Delete Branches After Merge
+title: GitHub Tutorial
 parent: XP Tutorials
 ---
 
