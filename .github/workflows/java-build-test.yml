@@ -12,7 +12,7 @@ on:
       - 'backend/**'
 
 jobs:
-  build:
+  java-build-and-test:
     runs-on: ubuntu-latest
 
     steps:

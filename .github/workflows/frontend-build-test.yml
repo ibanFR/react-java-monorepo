@@ -12,7 +12,7 @@ on:
       - 'frontend/**'
 
 jobs:
-  build-and-test:
+  react-build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
