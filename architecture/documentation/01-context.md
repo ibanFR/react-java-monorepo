@@ -1,5 +1,7 @@
 ## System Context
 
+![](embed:SystemContext)
+
 ### Purpose
 
 This monorepo implements a full-stack **authentication system** composed of two independently deployable services:

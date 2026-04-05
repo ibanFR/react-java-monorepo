@@ -1,5 +1,7 @@
 ## Containers
 
+![](embed:Containers)
+
 ### React SPA
 
 The Single-Page Application is a pure client-side app. It renders a login form and sends a `POST /api/auth/login`
