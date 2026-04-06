@@ -85,3 +85,26 @@ docs: improve formatting in 01-context.md and 02-containers.md
 * Enhanced table formatting for clarity in containers documentation
 * Aims to provide a more consistent and user-friendly documentation experience
 ```
+
+## Jira Issue Link in Footer (Required)
+
+**The Jira issue link is mandatory for all commits.** Extract the Jira issue ID from your branch name and include the full Jira issue link in the commit message footer.
+
+* **Extract the ID:** Find the Jira ID pattern (e.g., `GAUZ-33`) from your branch name
+* **Create the link:** Format it as the full URL: `https://gauzeder.atlassian.net/browse/JIRA-ID`
+* **Append to footer:** Place the complete link as the last line of your commit message
+* **No ID in branch?** Find or create the relevant Jira issue and include its link
+
+**Example:**
+
+```
+type: summary
+
+* Detail 1
+* Detail 2
+
+https://gauzeder.atlassian.net/browse/JIRA-ID
+```
+
+**Tip:** Use a git hook that searches for the pattern `(GAUZ|DEV|EIK)-\d+` in your branch name and automatically 
+constructs and appends the full Jira issue link to the commit message footer.
