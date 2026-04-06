@@ -220,8 +220,13 @@ All settings are found under **Settings → Branches → Branch protection rules
 2. In the left sidebar click **Branches**, then click **Edit** next to the `main` rule (or create a new rule).
 3. Check **Require status checks to pass before merging**.
 4. In the search box that appears, type the name of each job you want to require and select it:
-   - `java-build-and-test` or `skip-check` (add both — GitHub only enforces whichever one ran)
-   - `react-build-and-test` or `skip-check` (same approach for the frontend workflow)
+   - `java-build-and-test`
+   - `react-build-and-test`
+
+   > **Do not add `skip-check`.** When a required job is skipped (because no relevant files changed),
+   > GitHub automatically counts it as passing. Adding `skip-check` as a required check is not needed
+   > and would cause PRs to be blocked whenever only one stack's files are changed (since `skip-check`
+   > for the other stack would be skipped but not passing from GitHub's perspective).
 5. Optionally check **Require branches to be up to date before merging** to ensure CI always runs against the latest
    base branch.
 6. Click **Save changes**.
