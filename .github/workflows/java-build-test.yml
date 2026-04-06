@@ -8,11 +8,24 @@ on:
       - '.github/workflows/java-build-test.yml'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'backend/**'
 
 jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.changes.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+
   java-build-and-test:
+    needs: filter
+    if: needs.filter.outputs.backend == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -40,3 +53,10 @@ jobs:
         with:
           name: test-results
           path: backend/target/surefire-reports/
+
+  skip-check:
+    needs: filter
+    if: needs.filter.outputs.backend != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No backend changes, skipping the build"
