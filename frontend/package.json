@@ -8,7 +8,15 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "npm run test:unit",
+    "test:unit": "vitest run",
+    "bdd:run": "cucumber-js --config cucumber.mjs",
+    "bdd": "start-server-and-test \"vite preview --host 127.0.0.1 --port 4173\" http://127.0.0.1:4173 \"npm run bdd:run\"",
+    "bdd:headed": "PW_HEADLESS=false npm run bdd",
+    "bdd:debug": "PWDEBUG=1 PW_HEADLESS=false npm run bdd",
+    "bdd:smoke": "npm run bdd:run -- --tags \"@smoke\"",
+    "bdd:regression": "npm run bdd:run -- --tags \"@regression\"",
+    "test:all": "npm run test:unit && npm run bdd"
   },
   "dependencies": {
     "react": "^19.2.4",
@@ -18,6 +26,8 @@
     "node": ">=22"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
+    "@cucumber/junit-xml-formatter": "^0.13.2",
     "@eslint/js": "^9.39.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -31,6 +41,8 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "jsdom": "^29.0.1",
+    "playwright": "^1.59.1",
+    "start-server-and-test": "^3.0.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1",
