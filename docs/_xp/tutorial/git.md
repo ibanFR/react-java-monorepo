@@ -134,3 +134,111 @@ to `main` (or your default branch pattern).
   admins, but checking **Do not allow bypassing the above settings** disables even that escape hatch.
 
 **Reference:** [About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
+
+---
+
+## Require status checks before merging
+
+A status check is a signal that a CI job reports back to GitHub after running on a pull request. GitHub can be
+configured to **block merges** until specific status checks have passed. This turns the CI pipeline from an
+informational indicator into an enforced quality gate: no code reaches `main` unless it has been built and tested.
+
+### The problem
+
+Without required status checks, a pull request can be merged even when CI is red — or when CI never ran at all.
+This allows broken code to reach `main`, defeats the purpose of the CI pipeline, and often creates extra work
+restoring a stable state.
+
+In a monorepo, a second problem appears. GitHub's native `paths` filter on the `pull_request` trigger silently
+**skips the entire workflow** when none of the listed paths are changed. A skipped workflow reports no status to
+GitHub, so GitHub treats the check as absent rather than as passed. If that check is listed as required, the pull
+request is permanently blocked — even for changes that genuinely do not need that job to run (for example, a
+documentation-only change that does not touch `backend/**`).
+
+### Solution: path filtering inside the workflow
+
+Instead of filtering at the trigger level, keep the `pull_request` trigger unconditional and move the path logic
+**inside** the workflow using [`dorny/paths-filter`](https://github.com/dorny/paths-filter). Every pull request
+causes the workflow to run; the workflow then decides what to do:
+
+- If the relevant directory was changed → run the build and test job.
+- Otherwise → run a lightweight `skip-check` job that prints an explanatory message and exits successfully.
+
+Either way GitHub always receives a green status for that check, so the branch protection rule is satisfied without
+blocking unrelated pull requests.
+
+Both CI workflows in this repository already use this pattern:
+
+```yaml
+# .github/workflows/java-build-test.yml  (frontend-build-test.yml is identical in structure)
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/java-build-test.yml'
+  pull_request:
+    branches: [ main ]          # no paths filter here
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.changes.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+
+  java-build-and-test:
+    needs: filter
+    if: needs.filter.outputs.backend == 'true'
+    # ... full build steps ...
+
+  skip-check:
+    needs: filter
+    if: needs.filter.outputs.backend != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No backend changes, skipping the build"
+```
+
+The `push` trigger retains its `paths` filter because a direct push to `main` that skips the workflow entirely is
+acceptable — no branch protection rule depends on push runs.
+
+### Steps
+
+All settings are found under **Settings → Branches → Branch protection rules**. Edit (or create) the rule for `main`.
+
+1. Navigate to the repository **Settings** tab.
+2. In the left sidebar click **Branches**, then click **Edit** next to the `main` rule (or create a new rule).
+3. Check **Require status checks to pass before merging**.
+4. In the search box that appears, type the name of each job you want to require and select it:
+   - `java-build-and-test` or `skip-check` (add both — GitHub only enforces whichever one ran)
+   - `react-build-and-test` or `skip-check` (same approach for the frontend workflow)
+5. Optionally check **Require branches to be up to date before merging** to ensure CI always runs against the latest
+   base branch.
+6. Click **Save changes**.
+
+> **Tip:** the job name used in the branch protection rule must match the job `id` in the workflow YAML exactly
+> (case-sensitive). GitHub will not offer auto-complete for jobs that have never run, so trigger the workflow at least
+> once — by opening a draft pull request — before configuring the rule.
+
+### What happens next
+
+| Scenario | `filter` job | Build job | Status reported |
+|----------|-------------|-----------|-----------------|
+| PR touches `backend/**` | runs, output `true` | `java-build-and-test` runs | ✅ pass / ❌ fail |
+| PR does **not** touch `backend/**` | runs, output `false` | skipped | `skip-check` → ✅ pass |
+| PR touches `frontend/**` | runs, output `true` | `react-build-and-test` runs | ✅ pass / ❌ fail |
+| PR does **not** touch `frontend/**` | runs, output `false` | skipped | `skip-check` → ✅ pass |
+
+- GitHub blocks the merge button until all required checks report green.
+- A PR that breaks the backend build will show a red `java-build-and-test` check and cannot be merged.
+- A documentation-only PR will see `skip-check` pass for both workflows and can be merged immediately.
+
+**Reference:** [About required status checks](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-required-status-checks)
