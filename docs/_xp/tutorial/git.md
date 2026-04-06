@@ -85,3 +85,52 @@ The change is saved instantly.
 - The suggestion is informational; contributors are not forced to update before merging.
 
 **Reference:** [Keeping your pull request in sync with the base branch](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/keeping-your-pull-request-in-sync-with-the-base-branch)
+
+---
+
+## Protect the default branch against force pushes and deletion
+
+The default branch (`main`) is the source of truth for the project. Without protection, any collaborator with write
+access can rewrite its history with a force push or delete it entirely — actions that are very difficult to recover from
+and can corrupt the shared history for every contributor.
+
+### Why this matters
+
+| Risk | Consequence |
+|------|-------------|
+| **Force push** | Rewrites the commit history of `main`. Other contributors' local clones now diverge from the remote, causing confusing conflicts or silent data loss. CI runs attached to the overwritten commits disappear from the audit trail. |
+| **Branch deletion** | The `main` branch reference is removed from the remote. Any open pull request targeting `main` is immediately closed, and the default branch of the repository becomes undefined until it is recreated. |
+
+Enabling these two protections is a minimal, zero-friction safeguard: it does not require status checks to pass, does
+not block any normal merge workflow, and takes effect instantly.
+
+> If GitHub shows the advisory message *"Protect this branch from force pushing or deletion, or require status checks
+> before merging"* on your branch protection rule, enabling the two settings below is the lightweight way to satisfy
+> that warning without turning on required status checks.
+
+### Steps
+
+All settings are found under **Settings → Branches → Branch protection rules**. Edit (or create) the rule that applies
+to `main` (or your default branch pattern).
+
+1. Navigate to the main page of the repository on GitHub and click the **Settings** tab.
+2. In the left sidebar click **Branches**, then click **Edit** next to the rule for `main` (or **Add branch protection
+   rule** if none exists yet, entering `main` as the branch name pattern).
+3. Scroll to the **Push restrictions** section and check **Do not allow bypassing the above settings** if you want the
+   protection to apply even to administrators.
+4. Check **Restrict force pushes** — this blocks all `git push --force` and `git push --force-with-lease` commands
+   targeting the protected branch.
+5. Check **Do not allow deletions** — this prevents the branch from being deleted via the GitHub UI, the API, or the
+   command line.
+6. Click **Save changes**.
+
+### What happens next
+
+- Any attempt to force-push to `main` is rejected by GitHub with the error:
+  `remote: error: GH006: Protected branch update failed, force push prohibited.`
+- Any attempt to delete `main` via `git push origin --delete main` or the GitHub UI is blocked.
+- Normal pushes and pull request merges are **not affected** — only destructive rewrites and deletions are prevented.
+- Repository admins can still perform force pushes or deletions if the **Allow force pushes** option is granted to
+  admins, but checking **Do not allow bypassing the above settings** disables even that escape hatch.
+
+**Reference:** [About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
