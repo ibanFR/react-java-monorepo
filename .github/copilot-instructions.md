@@ -136,3 +136,15 @@ ESLint 9 flat config (`eslint.config.js`) with:
 ## Commit Message Convention
 
 All commit messages must follow the convention described in [.github/git-commit-instructions.md].
+
+---
+
+## Branch Naming Convention
+
+When performing any coding task, **always** create and work on a new Git branch whose name starts with the Jira issue ID provided by the user, followed by a short kebab-case description.
+
+Format: `<JIRA-ID>-<short-description>`
+Example: `AUTH-42-add-logout-endpoint`
+
+- If the user does not supply a Jira issue ID, ask for it before starting the coding task.
+- Branch off from the repository's default branch (`main`) unless the user specifies otherwise.
