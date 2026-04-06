@@ -18,3 +18,8 @@
 ## Related Issues
 
 <!-- Link any related issues: Closes #123 -->
+
+## Jira
+
+<!-- Jira issue link is appended automatically by the prepare-commit-msg hook -->
+<!-- https://gauzeder.atlassian.net/browse/JIRA-ID -->

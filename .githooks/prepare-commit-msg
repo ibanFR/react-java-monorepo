@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# prepare-commit-msg
+#
+# Extracts a Jira issue ID (pattern: GAUZ|DEV|EIK followed by digits) from the
+# current branch name and appends the full Jira issue URL to the commit message.
+#
+# Usage: Git calls this hook automatically with the commit message file as $1.
+# Enable by running: git config core.hooksPath .githooks
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"   # message|template|merge|squash|commit
+
+# Only act on regular commits (not merges, squashes, or amends with a pre-filled message)
+if [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
+  exit 0
+fi
+
+BRANCH_NAME=$(git symbolic-ref --short HEAD 2>/dev/null)
+
+if [ -z "$BRANCH_NAME" ]; then
+  exit 0
+fi
+
+JIRA_ID=$(echo "$BRANCH_NAME" | grep -oE '(GAUZ|DEV|EIK)-[0-9]+' | head -1)
+
+if [ -z "$JIRA_ID" ]; then
+  exit 0
+fi
+
+JIRA_URL="https://gauzeder.atlassian.net/browse/${JIRA_ID}"
+
+# Append the Jira URL as the last line of the commit message if not already present
+if ! grep -qF "$JIRA_URL" "$COMMIT_MSG_FILE"; then
+  printf '\n%s\n' "$JIRA_URL" >> "$COMMIT_MSG_FILE"
+fi
