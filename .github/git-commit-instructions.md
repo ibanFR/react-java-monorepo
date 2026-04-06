@@ -91,7 +91,7 @@ docs: improve formatting in 01-context.md and 02-containers.md
 **The Jira issue link is mandatory for all commits.** Extract the Jira issue ID from your branch name and include the full Jira issue link in the commit message footer.
 
 * **Extract the ID:** Find the Jira ID pattern (e.g., `GAUZ-33`) from your branch name
-* **Create the link:** Format it as the full URL: `https://gauzeder.atlassian.net/browse/JIRA-ID`
+* **Create the link:** Format it as the full URL: `https://ibanfr.atlassian.net/browse/JIRA-ID`
 * **Append to footer:** Place the complete link as the last line of your commit message
 
 **Example:**
@@ -102,5 +102,5 @@ type: summary
 * Detail 1
 * Detail 2
 
-https://gauzeder.atlassian.net/browse/JIRA-ID
+https://ibanfr.atlassian.net/browse/JIRA-ID
 ```
