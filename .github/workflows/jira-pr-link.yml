@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, reopened]
 
+env:
+  JIRA_BASE_URL: https://gauzeder.atlassian.net/browse
+
 jobs:
   jira-link:
     runs-on: ubuntu-latest
@@ -23,7 +26,7 @@ jobs:
             }
 
             const jiraId = match[1];
-            const jiraUrl = `https://gauzeder.atlassian.net/browse/${jiraId}`;
+            const jiraUrl = `${{ env.JIRA_BASE_URL }}/${jiraId}`;
             const currentBody = context.payload.pull_request.body || '';
 
             if (currentBody.includes(jiraUrl)) {
