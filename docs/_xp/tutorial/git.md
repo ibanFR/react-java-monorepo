@@ -207,8 +207,10 @@ jobs:
       - run: echo "No backend changes, skipping the build"
 ```
 
-The `push` trigger retains its `paths` filter because a direct push to `main` that skips the workflow entirely is
-acceptable — no branch protection rule depends on push runs.
+The `push` trigger retains its `paths` filter for post-merge runs (for example, to trigger a deployment after a
+PR is merged). Once direct pushes to `main` are blocked by a branch protection rule (see
+[Require a pull request before merging](#require-a-pull-request-before-merging) below), the `push` trigger will
+only fire from the merge commit that GitHub creates when a PR is merged, never from a direct push.
 
 ### Steps
 
@@ -242,3 +244,47 @@ All settings are found under **Settings → Branches → Branch protection rules
 - A documentation-only PR will see `skip-check` pass for both workflows and can be merged immediately.
 
 **Reference:** [About required status checks](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-required-status-checks)
+
+---
+
+## Require a pull request before merging
+
+Required status checks only apply to pull request merges. A collaborator with write access can still push commits
+directly to `main`, bypassing CI entirely. Requiring a pull request before merging closes this gap: direct pushes
+are rejected, so every change must arrive via a PR — and therefore must pass the required status checks.
+
+### The problem
+
+| Path to `main` | Goes through status checks? |
+|----------------|----------------------------|
+| Direct `git push origin main` | ❌ No — the push lands immediately |
+| Pull request with **no** required status checks | ❌ No — the merge button is always active |
+| Pull request **with** required status checks, but direct push still allowed | ❌ Partial — PRs are gated, but direct pushes bypass everything |
+| Pull request **with** required status checks **and** direct push blocked | ✅ Yes — every commit on `main` has a successful build |
+
+### Steps
+
+All settings are found under **Settings → Branches → Branch protection rules**. Edit (or create) the rule for `main`.
+
+1. Navigate to the repository **Settings** tab.
+2. In the left sidebar click **Branches**, then click **Edit** next to the `main` rule.
+3. Check **Require a pull request before merging**.
+4. Optionally increase **Required number of approvals** if your team practices peer review.
+5. Click **Save changes**.
+
+> Combine this rule with the **Require status checks to pass before merging** setting (see the section above) to
+> ensure every commit on `main` has been built and tested before it arrives.
+
+### What happens next
+
+- Any attempt to push directly to `main` is rejected by GitHub with the error:
+  `remote: error: GH006: Protected branch update failed, direct push to protected branch not allowed.`
+- All changes must be submitted as pull requests. The PR is only mergeable once all required status checks report
+  green.
+- Repository admins retain the ability to bypass the rule unless **Do not allow bypassing the above settings** is
+  also checked.
+- The `push` trigger in the CI workflows continues to function: when a PR is merged, GitHub creates a merge commit
+  on `main`, which fires the `push` event. The workflows use this for any post-merge steps (for example, tagging a
+  release or deploying to an environment).
+
+**Reference:** [About protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches#require-pull-requests-before-merging)
