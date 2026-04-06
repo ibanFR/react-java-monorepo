@@ -1,0 +1,43 @@
+name: Append Jira Issue Link to PR
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  jira-link:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Extract Jira ID and append link to PR body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+            const match = branch.match(/([A-Z]+-\d+)/);
+
+            if (!match) {
+              console.log(`No Jira ID found in branch name: ${branch}`);
+              return;
+            }
+
+            const jiraId = match[1];
+            const jiraUrl = `https://gauzeder.atlassian.net/browse/${jiraId}`;
+            const currentBody = context.payload.pull_request.body || '';
+
+            if (currentBody.includes(jiraUrl)) {
+              console.log('Jira link already present in PR body.');
+              return;
+            }
+
+            const newBody = currentBody.trimEnd() + `\n\n${jiraUrl}`;
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              body: newBody,
+            });
+
+            console.log(`Appended Jira link: ${jiraUrl}`);
