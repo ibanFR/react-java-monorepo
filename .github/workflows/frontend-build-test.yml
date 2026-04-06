@@ -8,11 +8,24 @@ on:
       - '.github/workflows/frontend-build-test.yml'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'frontend/**'
 
 jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.changes.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+
   react-build-and-test:
+    needs: filter
+    if: needs.filter.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -41,3 +54,9 @@ jobs:
         run: npm test
         working-directory: frontend
 
+  skip-check:
+    needs: filter
+    if: needs.filter.outputs.frontend != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "No frontend changes, skipping the build"
