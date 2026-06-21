@@ -50,13 +50,11 @@ Running both pipelines on every change would waste minutes of CI time validating
 workflow is scoped to its own directory: the backend pipeline cares about `backend/**`, the frontend pipeline about
 `frontend/**`.
 
-The subtlety is that branch protection requires a status check to pass before merging, and a check that never *runs*
-reports no status — which would block every pull request that happens to touch only one stack. The project resolves
-this tension by always letting the workflow start on a pull request and deciding *inside* it whether to run the full
-build or a lightweight job that reports success. Every PR therefore gets a definitive pass/fail for each required
-check, whether or not it touched that stack. The mechanics of this pattern are documented in
-[GitHub CI Path Filtering]({% link _xp/reference/github-ci-path-filtering.md %}), and the protection rules that depend
-on it in [GitHub Branch Protection Rationale]({% link _xp/explanation/github-branch-protection-rationale.md %}).
+This scoping interacts with branch protection in a way specific to monorepos — a naively skipped workflow reports no
+status and can permanently block unrelated pull requests. Why the project filters paths *inside* the workflow rather
+than on the trigger is explained in
+[GitHub Branch Protection Rationale]({% link _xp/explanation/github-branch-protection-rationale.md %}#required-checks-in-a-monorepo),
+and the concrete workflow shape in [GitHub CI Path Filtering]({% link _xp/reference/github-ci-path-filtering.md %}).
 
 ## Why the pipelines avoid hardcoded versions
 
