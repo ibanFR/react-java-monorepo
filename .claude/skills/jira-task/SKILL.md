@@ -177,30 +177,6 @@ Use Atlassian Document Format (ADF). Substitute the generated content into the c
       "content": [
         "<one listItem per generated acceptance criterion — each with type:listItem > type:paragraph > type:text>"
       ]
-    },
-    {
-      "type": "heading",
-      "attrs": { "level": 2 },
-      "content": [{ "type": "text", "text": "TODO" }]
-    },
-    {
-      "type": "panel",
-      "attrs": { "panelType": "warning" },
-      "content": [
-        {
-          "type": "paragraph",
-          "content": [{ "type": "text", "text": "Remove this section once completed" }]
-        }
-      ]
-    },
-    {
-      "type": "bulletList",
-      "content": [
-        { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Create Sub-Tasks — break down into smaller units of work" }] }] },
-        { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Link dependent Jira issues or epics" }] }] },
-        { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Add labels: TechDebt, Documentation, DevOps (as applicable)" }] }] },
-        { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Set priority: HIGH, MEDIUM, LOW (as applicable)" }] }] }
-      ]
     }
   ]
 }
