@@ -80,3 +80,22 @@ are rejected, so every change must arrive via a PR — and therefore must pass t
 Once direct pushes to `main` are blocked, the `push` trigger in the CI workflows only fires from the merge commit that
 GitHub creates when a PR is merged, never from a direct push — which makes it a reliable hook for post-merge steps such
 as tagging a release or deploying to an environment.
+
+## Status checks or pull requests: why it is not a choice
+{: #status-checks-vs-pull-requests }
+
+The two settings are easy to read as competing alternatives — require status checks *or* require a pull request — but
+they each close a different gap, and each one **alone leaves the other gap open**:
+
+- **Required status checks alone** gate the merge button, but only on pull requests. A direct `git push origin main`
+  still bypasses CI entirely.
+- **Require-a-pull-request alone** blocks direct pushes, but with no required checks a pull request can be merged while
+  its CI is red.
+
+So the honest answer to "which one?" is **both**. Only the combination guarantees the invariant this project actually
+cares about — *every commit on `main` has been built and tested* — which is why the [paths-to-main
+table](#paths-to-main) marks the combination as the single ✅ row.
+
+For a single-maintainer repository, set the pull-request rule's **Required approvals to `0`**: direct pushes stay
+blocked and CI stays enforced, while the maintainer can still merge their own pull requests without waiting on a second
+person. Raise the approval count later if the project grows into a team that practices peer review.
