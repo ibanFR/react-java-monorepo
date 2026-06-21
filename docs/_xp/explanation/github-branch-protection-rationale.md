@@ -96,9 +96,10 @@ So the honest answer to "which one?" is **both**. Only the combination guarantee
 cares about — *every commit on `main` has been built and tested* — which is why the [paths-to-main
 table](#paths-to-main) marks the combination as the single ✅ row.
 
-For a single-maintainer repository, set the pull-request rule's **Required approvals to `0`**: direct pushes stay
-blocked and CI stays enforced, while the maintainer can still merge their own pull requests without waiting on a second
-person. Raise the approval count later if the project grows into a team that practices peer review.
+For a single-maintainer repository, the appropriate strength for that pull-request rule is **zero required
+approvals**: direct pushes stay blocked and CI stays enforced, yet the maintainer can still merge their own pull
+requests without waiting on a second person. The approval count is the lever to raise later, once the project grows
+into a team that practices peer review.
 
 ## Keeping `main` green with direct pushes
 {: #direct-pushes }
@@ -122,11 +123,10 @@ can run before or around the push:
 | **CI on `push` + auto-revert** of the breaking commit | No — reactive | After the commit has landed | Reverts quickly, so `main` is red only briefly |
 | **Pull request + required status checks** | **Yes — server-side** | Before the merge button unlocks | Guaranteed |
 
-- A **`pre-push` hook** runs the same commands CI runs (`mvn -B package`, `npm run lint && npm run build && npm test`),
-  scoped to the module that actually changed, and aborts the push if they fail. Committing the hook to the repo and
-  wiring it with `core.hooksPath` gives every collaborator the same gate — see
-  [Run a pre-push build gate]({% link _xp/how-to/run-pre-push-build-gate.md %}). It is bypassable, so it relies on team
-  discipline rather than enforcement.
+- A **`pre-push` hook** runs the same checks CI runs, locally, before the push leaves the machine, and aborts it if
+  they fail. Because it lives on the developer's machine it is bypassable, so it depends on team discipline rather than
+  enforcement. For how to set one up that mirrors the CI path filters, see
+  [Run a pre-push build gate]({% link _xp/how-to/run-pre-push-build-gate.md %}).
 - **Auto-revert on red** does not prevent a broken `main`; it bounds how long `main` stays broken by reverting the
   offending commit automatically when the post-push workflow fails. This is the Trunk-Based "stop the line" safety net.
 
