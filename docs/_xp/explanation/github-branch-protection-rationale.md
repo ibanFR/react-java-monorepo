@@ -80,3 +80,56 @@ are rejected, so every change must arrive via a PR — and therefore must pass t
 Once direct pushes to `main` are blocked, the `push` trigger in the CI workflows only fires from the merge commit that
 GitHub creates when a PR is merged, never from a direct push — which makes it a reliable hook for post-merge steps such
 as tagging a release or deploying to an environment.
+
+## Status checks or pull requests: why it is not a choice
+{: #status-checks-vs-pull-requests }
+
+The two settings are easy to read as competing alternatives — require status checks *or* require a pull request — but
+they each close a different gap, and each one **alone leaves the other gap open**:
+
+- **Required status checks alone** gate the merge button, but only on pull requests. A direct `git push origin main`
+  still bypasses CI entirely.
+- **Require-a-pull-request alone** blocks direct pushes, but with no required checks a pull request can be merged while
+  its CI is red.
+
+So the honest answer to "which one?" is **both**. Only the combination guarantees the invariant this project actually
+cares about — *every commit on `main` has been built and tested* — which is why the [paths-to-main
+table](#paths-to-main) marks the combination as the single ✅ row.
+
+For a single-maintainer repository, the appropriate strength for that pull-request rule is **zero required
+approvals**: direct pushes stay blocked and CI stays enforced, yet the maintainer can still merge their own pull
+requests without waiting on a second person. The approval count is the lever to raise later, once the project grows
+into a team that practices peer review.
+
+## Keeping `main` green with direct pushes
+{: #direct-pushes }
+
+Some teams deliberately allow collaborators to push straight to `main` — the classic Trunk-Based Development model of
+committing to the trunk many times a day rather than through pull requests. The question then becomes: how do you stop
+a direct push from breaking the build?
+
+The uncomfortable answer is that **GitHub cannot block a direct push based on CI results.** Required status checks
+evaluate the *merge button* of a pull request; a direct `git push origin main` has no merge button — the commit lands
+the instant the push is accepted, before any workflow has run. There is no server-side "run the pipeline, then accept
+or reject the push" mechanism on GitHub-hosted repositories. Server-side enforcement is precisely what the pull-request
+flow gives you, and it is the only thing that *guarantees* a green `main`.
+
+If you still want direct pushes, you keep `main` green by moving the check **off the server** to the two places that
+can run before or around the push:
+
+| Mechanism | Enforced? | When it runs | Keeps `main` green? |
+|-----------|-----------|--------------|---------------------|
+| **`pre-push` git hook** running the module build locally | No — bypassable with `git push --no-verify` | Before the push leaves the machine | Best-effort; catches honest mistakes |
+| **CI on `push` + auto-revert** of the breaking commit | No — reactive | After the commit has landed | Reverts quickly, so `main` is red only briefly |
+| **Pull request + required status checks** | **Yes — server-side** | Before the merge button unlocks | Guaranteed |
+
+- A **`pre-push` hook** runs the same checks CI runs, locally, before the push leaves the machine, and aborts it if
+  they fail. Because it lives on the developer's machine it is bypassable, so it depends on team discipline rather than
+  enforcement. For how to set one up that mirrors the CI path filters, see
+  [Run a pre-push build gate]({% link _xp/how-to/run-pre-push-build-gate.md %}).
+- **Auto-revert on red** does not prevent a broken `main`; it bounds how long `main` stays broken by reverting the
+  offending commit automatically when the post-push workflow fails. This is the Trunk-Based "stop the line" safety net.
+
+In short: direct pushes can be made *safe in practice* (a `pre-push` hook plus revert-on-red plus small, frequent
+commits), but only the pull-request flow makes a green `main` *guaranteed*. That trade-off — enforcement versus the
+zero-ceremony of pushing to the trunk — is the real decision behind allowing direct pushes.
