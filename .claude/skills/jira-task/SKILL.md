@@ -58,7 +58,7 @@ Parse the skill arguments:
    **b. Search for related Jira issues** — only if the user said yes. Call `mcp__atlassian-rovo-mcp__searchJiraIssuesUsingJql` with:
    - `cloudId`: `https://ibanfr.atlassian.net`
    - `jql`: `project = GAUZ AND text ~ "<key terms from summary>" ORDER BY updated DESC`
-   - `maxResults`: `10`
+   - `maxResults`: `50` (the JQL tool enforces a 50–100 range; `50` is the minimum)
    - `fields`: `["summary", "status", "issuetype"]`
 
    Extract key terms from the summary (nouns, verbs, domain words — skip stop words). Keep only issues semantically related to the summary. Discard unrelated hits.
