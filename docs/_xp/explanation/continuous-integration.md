@@ -6,11 +6,14 @@ parent: XP Concepts
 # Continuous Integration
 {: .no_toc }
 
-This repository leverages [GitHub Actions] to automate CI/CD workflows for the "{{ site.title }}"
+Why this repository practices continuous integration, the problems it prevents, and the reasoning
+behind how the pipelines are shaped.
 {: .fs-6 .fw-300 }
 
-With each push to the `main` branch, the workflows defined in the `.github/workflows/` directory are triggered to
-build, test, and release the software across its Java and .NET implementations.
+For the step-by-step description of each workflow, see
+[CI Workflows]({% link _xp/reference/ci-workflows.md %}).
+To publish the documentation site, see
+[Publish Docs to GitHub Pages]({% link _xp/how-to/publish-docs-to-github-pages.md %}).
 
 ## Table of Contents
 {: .no_toc .text-delta }
@@ -18,131 +21,66 @@ build, test, and release the software across its Java and .NET implementations.
 1. TOC
 {:toc}
 
-## Java workflow
+## Why continuous integration
 
-The [`.github/workflows/java-build-test.yml`]({{ site.repository }}/blob/main/.github/workflows/java-build-test.yml) workflow automates the build and test process for the Java implementation of
-the "{{ site.title }}" software. 
+Continuous integration is the practice of merging every developer's work into a shared `main` branch frequently —
+ideally many times a day — and validating each merge automatically. The alternative, letting branches diverge for
+days or weeks, leads to *integration hell*: the longer code stays apart, the more its assumptions drift, and the
+harder the eventual merge becomes. Conflicts pile up, and defects that touch more than one change are discovered late,
+when they are expensive to untangle.
 
-This workflow ensures that every code change is automatically validated, helping to
-catch bugs early and maintain code quality throughout the development lifecycle.
+Automated validation on every push and pull request is what makes frequent integration safe. It shifts the discovery
+of build breaks and failing tests from "sometime after merge, on someone's machine" to "within minutes, on a neutral
+machine, before merge". `main` stays releasable because nothing reaches it without first proving it compiles and
+passes its tests. This is the discipline that lets the rest of the XP practices — small steps, refactoring,
+collective ownership — operate without fear.
 
-### Workflow Triggers
+## Why separate pipelines per stack
 
-The workflow is configured to run automatically whenever code is pushed to either the
-`main` or `solution` branches, but only if the changes affect files within the [`java/`]({{ site.repository }}/tree/main/java) directory or the workflow file
-itself:
+This is a monorepo: the Java backend and the React frontend live side by side. They have unrelated toolchains, build
+times, and failure modes, so the project runs an independent workflow for each rather than one combined pipeline.
 
-```yaml
-on:
-  push:
-    branches: [ main, solution ]
-    paths:
-      - 'java/**'
-      - '.github/workflows/java-build-test.yml'
-  pull_request:
-    branches: [ main, solution ]
-    paths:
-      - 'java/**'
-```
+The benefit is isolation and speed. A frontend change does not wait on a Maven build, and a backend failure does not
+obscure the state of the frontend. Each stack reports its own status, so a reviewer can see at a glance exactly what
+broke. The cost — two workflow files to maintain instead of one — is small and worth paying for the clearer signal.
 
-Second, it triggers when pull requests are opened or updated targeting these same branches with Java-related
-changes. 
+## Why builds are path-filtered
 
-This path filtering is an optimization that prevents unnecessary workflow runs when unrelated parts of the
-repository are modified.
+Running both pipelines on every change would waste minutes of CI time validating code that did not change. So each
+workflow is scoped to its own directory: the backend pipeline cares about `backend/**`, the frontend pipeline about
+`frontend/**`.
 
-### Build Matrix Strategy
+The subtlety is that branch protection requires a status check to pass before merging, and a check that never *runs*
+reports no status — which would block every pull request that happens to touch only one stack. The project resolves
+this tension by always letting the workflow start on a pull request and deciding *inside* it whether to run the full
+build or a lightweight job that reports success. Every PR therefore gets a definitive pass/fail for each required
+check, whether or not it touched that stack. The mechanics of this pattern are documented in
+[GitHub CI Path Filtering]({% link _xp/reference/github-ci-path-filtering.md %}), and the protection rules that depend
+on it in [GitHub Branch Protection Rationale]({% link _xp/explanation/github-branch-protection-rationale.md %}).
 
-The workflow employs a matrix strategy to test across different Java versions:
+## Why the pipelines avoid hardcoded versions
 
-```yaml
-strategy:
-  matrix:
-    java-version: [ '25' ]
-```
+A CI pipeline that pins its own copy of the language version will silently drift from what developers actually use.
+When the two disagree, "works on my machine" and "works in CI" stop meaning the same thing — exactly the gap CI exists
+to close.
 
-While currently configured for Java 25 only, the matrix structure allows for easy expansion to test against multiple
-Java versions simultaneously. You could add additional versions like `['17', '21', '25']` to ensure compatibility across
-different Java releases, which is particularly valuable for libraries intended for broad consumption.
+The workflows are deliberately built to derive versions from a single source of truth. The Java pipeline reads the
+required JDK from `backend/pom.xml` rather than naming a version in the workflow, and the frontend pipeline reads the
+Node version from `frontend/.nvmrc`. There is one place to change a version, and CI follows it automatically. For the
+same reason, dependency installs are reproducible: Maven and `npm ci` resolve from committed lockfiles, so a build is
+not at the mercy of whatever a registry happens to serve that day.
 
-### Environment Setup
+## Why test results are always preserved
 
-The workflow begins by checking out the repository code using `actions/checkout@v4`, which clones the repository at the
-specific commit that triggered the workflow. Following this, it configures the Java environment:
+When a build fails, the failure itself is the moment you most need detail — and the moment it is easiest to lose,
+because a failing job tends to stop early. The Java workflow uploads its test reports unconditionally, even when the
+build fails, so the evidence needed to diagnose a failure survives the run that produced it. Fast, well-reported
+feedback is what keeps a red build from sitting unaddressed.
 
-```yaml
-- name: Set up JDK ${{ matrix.java-version }}
-  uses: actions/setup-java@v5
-  with:
-    java-version: ${{ matrix.java-version }}
-    distribution: 'temurin'
-    cache: maven
-```
+## How it fits the wider workflow
 
-This step installs the Eclipse Temurin distribution of Java, which is a popular
-open-source JDK. 
-
-The `cache: maven` option is particularly important for performance—it caches Maven dependencies
-between workflow runs, significantly reducing build times by avoiding redundant downloads of the same libraries.
-
-### Build and Test Execution
-
-The actual build and test phase is executed using Maven:
-
-```yaml
-- name: Build with Maven
-  run: mvn -B package
-  working-directory: java
-```
-
-The `mvn -B package` command runs Maven in batch mode (the `-B` flag), which is ideal for CI environments as it
-suppresses interactive output and provides cleaner logs. The `package` goal compiles the code, runs all unit tests, and
-packages the application into a JAR file. The `working-directory: java` directive ensures Maven runs in the correct
-subdirectory where the [`pom.xml`]({{ site.github.repository_url }}/blob/main/java/pom.xml) file is located.
-
-### Test Results Artifact
-
-Finally, the workflow preserves test results for later analysis:
-
-```yaml
-- name: Upload test results
-  if: always()
-  uses: actions/upload-artifact@v4
-  with:
-    name: test-results
-    path: java/target/surefire-reports/
-```
-
-The `if: always()` condition is crucial—it ensures test results are uploaded regardless of whether tests pass or fail.
-This allows developers to download and examine detailed test reports even when the build fails, making debugging much
-easier. 
-
-The artifacts are stored by GitHub Actions and remain available for download from the workflow run page,
-typically for 90 days by default.
-
-## Frontend Build and Test Workflow
-
-A dedicated GitHub Actions workflow ensures the React frontend builds and passes all tests on every push and pull request. This workflow is defined in `.github/workflows/frontend-build-test.yml` and includes:
-
-- Checking out the repository
-- Setting up Node.js and caching dependencies
-- Installing dependencies with `npm ci`
-- Linting the code with `npm run lint`
-- Building the frontend with `npm run build`
-- Running all tests with `npm test`
-
-This helps maintain code quality and prevents broken builds from being merged.
-
-## Pages workflow
-
-To publish your software documentation to GitHub Pages, configure your repository by following the steps in
-[Publishing with a custom GitHub Actions workflow].
-
-After the configuration is complete, the [`.github/workflows/pages.yml`]({{ site.github.repository_url }}/blob/main/.github/workflows/pages.yml) workflow will automatically build and deploy the
-documentation site to GitHub Pages whenever changes under the [`docs/`]({{ site.github.repository_url }}/tree/main/docs) directory are pushed to the `main` branch.
-
-[GitHub Actions]: https://docs.github.com/en/actions
-
-[Using secrets in GitHub Actions]: https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions
-
-[Publishing with a custom GitHub Actions workflow]: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow
+Continuous integration is one half of a pair. CI proves that what is being merged is sound; branch protection ensures
+nothing reaches `main` without that proof. The status checks these workflows publish are the inputs that the
+protection rules require, and the path-filtering design exists precisely so those two systems cooperate in a monorepo.
+Read together with [GitHub Branch Protection Rationale]({% link _xp/explanation/github-branch-protection-rationale.md %}),
+they describe a single idea: a default branch that is always green, always releasable, and safe to build on.
