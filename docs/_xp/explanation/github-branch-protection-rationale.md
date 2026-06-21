@@ -99,3 +99,37 @@ table](#paths-to-main) marks the combination as the single ✅ row.
 For a single-maintainer repository, set the pull-request rule's **Required approvals to `0`**: direct pushes stay
 blocked and CI stays enforced, while the maintainer can still merge their own pull requests without waiting on a second
 person. Raise the approval count later if the project grows into a team that practices peer review.
+
+## Keeping `main` green with direct pushes
+{: #direct-pushes }
+
+Some teams deliberately allow collaborators to push straight to `main` — the classic Trunk-Based Development model of
+committing to the trunk many times a day rather than through pull requests. The question then becomes: how do you stop
+a direct push from breaking the build?
+
+The uncomfortable answer is that **GitHub cannot block a direct push based on CI results.** Required status checks
+evaluate the *merge button* of a pull request; a direct `git push origin main` has no merge button — the commit lands
+the instant the push is accepted, before any workflow has run. There is no server-side "run the pipeline, then accept
+or reject the push" mechanism on GitHub-hosted repositories. Server-side enforcement is precisely what the pull-request
+flow gives you, and it is the only thing that *guarantees* a green `main`.
+
+If you still want direct pushes, you keep `main` green by moving the check **off the server** to the two places that
+can run before or around the push:
+
+| Mechanism | Enforced? | When it runs | Keeps `main` green? |
+|-----------|-----------|--------------|---------------------|
+| **`pre-push` git hook** running the module build locally | No — bypassable with `git push --no-verify` | Before the push leaves the machine | Best-effort; catches honest mistakes |
+| **CI on `push` + auto-revert** of the breaking commit | No — reactive | After the commit has landed | Reverts quickly, so `main` is red only briefly |
+| **Pull request + required status checks** | **Yes — server-side** | Before the merge button unlocks | Guaranteed |
+
+- A **`pre-push` hook** runs the same commands CI runs (`mvn -B package`, `npm run lint && npm run build && npm test`),
+  scoped to the module that actually changed, and aborts the push if they fail. Committing the hook to the repo and
+  wiring it with `core.hooksPath` gives every collaborator the same gate — see
+  [Run a pre-push build gate]({% link _xp/how-to/run-pre-push-build-gate.md %}). It is bypassable, so it relies on team
+  discipline rather than enforcement.
+- **Auto-revert on red** does not prevent a broken `main`; it bounds how long `main` stays broken by reverting the
+  offending commit automatically when the post-push workflow fails. This is the Trunk-Based "stop the line" safety net.
+
+In short: direct pushes can be made *safe in practice* (a `pre-push` hook plus revert-on-red plus small, frequent
+commits), but only the pull-request flow makes a green `main` *guaranteed*. That trade-off — enforcement versus the
+zero-ceremony of pushing to the trunk — is the real decision behind allowing direct pushes.
