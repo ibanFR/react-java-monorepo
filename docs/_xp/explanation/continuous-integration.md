@@ -4,7 +4,6 @@ parent: XP Concepts
 ---
 
 # Continuous Integration
-
 {: .no_toc }
 
 This repository leverages [GitHub Actions] to automate CI/CD workflows for the "{{ site.title }}"
@@ -14,7 +13,6 @@ With each push to the `main` branch, the workflows defined in the `.github/workf
 build, test, and release the software across its Java and .NET implementations.
 
 ## Table of Contents
-
 {: .no_toc .text-delta }
 
 1. TOC
