@@ -46,7 +46,7 @@ Built by the `pages.yml` GitHub Actions workflow (Jekyll). No local build needed
 
 ## Backend architecture (hexagonal / DDD)
 
-All sources under `backend/src/main/java/com/ibanfr/auth/`. Dependencies point inward toward `domain`:
+All sources under `backend/src/main/java/com/ibanfr/<context>/` (currently only `auth`). Each bounded context is layered the same way; dependencies point inward toward `domain`:
 
 | Layer          | Package                           | Examples                          | Role                                  |
 |----------------|-----------------------------------|-----------------------------------|---------------------------------------|
@@ -68,7 +68,7 @@ Entry: `src/main.tsx` (ReactDOM root + StrictMode) → `App.tsx` → `src/pages/
 
 ## CI
 
-Path-filtered GitHub Actions on push/PR to `main`/`solution`: `java-build-test.yml` (backend, `mvn -B package`), `frontend-build-test.yml` (lint+build+test), `pages.yml` (Jekyll deploy on `docs/**`). The Java workflow reads the JDK version from `pom.xml`'s `maven.compiler.release`.
+Path-filtered GitHub Actions on push/PR to `main`: `java-build-test.yml` (backend, `mvn -B package`), `frontend-build-test.yml` (lint+build+test), `pages.yml` (Jekyll deploy on `docs/**`). The Java workflow reads the JDK version from `pom.xml`'s `maven.compiler.release`.
 
 ## Conventions (enforced)
 
@@ -81,5 +81,5 @@ Path-filtered GitHub Actions on push/PR to `main`/`solution`: `java-build-test.y
 When connected to atlassian-rovo-mcp:
 - **MUST** use Jira project key = GAUZ
 - **MUST** use cloudId = "https://ibanfr.atlassian.net" (do NOT call getAccessibleAtlassianResources)
-- **MUST** use `maxResults: 10` or `limit: 10` for ALL Jira JQL and Confluence CQL search operations.
+- **MUST** keep search result sets small: pass `limit: 10` for Confluence CQL searches. For Jira JQL searches the tool enforces a 50–100 range, so pass `maxResults: 50` (the minimum).
 
