@@ -1,0 +1,49 @@
+---
+layout: default
+---
+
+<article class="post">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+    <div class="post-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">
+        {{ page.date | date: "%B %-d, %Y" }}
+      </time>
+      {% if page.author %}
+        &nbsp;&middot;&nbsp;
+        <span class="post-author">{{ page.author }}</span>
+      {% endif %}
+    </div>
+    <div class="post-chips">
+      {% if page.categories and page.categories.size > 0 %}
+        {% for category in page.categories %}
+          <a href="{{ site.baseurl }}/blog/category/{{ category | slugify }}/" class="chip chip-category">{{ category }}</a>
+        {% endfor %}
+      {% endif %}
+      {% if page.tags and page.tags.size > 0 %}
+        {% for tag in page.tags %}
+          <a href="{{ site.baseurl }}/blog/tag/{{ tag | slugify }}/" class="chip chip-tag">#{{ tag }}</a>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+
+  <footer class="post-footer">
+    <a href="{{ site.baseurl }}/blog/">&larr; Back to Blog</a>
+  </footer>
+</article>
+
+<style>
+.post-meta { color: #6b7280; font-size: 0.9rem; margin-top: 0.25rem; }
+.post-chips { margin: 0.75rem 0 1.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.8rem; text-decoration: none; }
+.chip-category { background: #dbeafe; color: #1d4ed8; }
+.chip-category:hover { background: #bfdbfe; }
+.chip-tag { background: #f3f4f6; color: #374151; }
+.chip-tag:hover { background: #e5e7eb; }
+.post-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; }
+</style>
