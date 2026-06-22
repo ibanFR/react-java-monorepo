@@ -27,13 +27,18 @@ This repository follows [Semantic Versioning (SemVer)](https://semver.org/) and 
   └─⫸ Commit Type: feat|fix|refactor|test|build|ci|docs
 ```
 
+Do **not** use a scope (e.g. `feat(docs):`). Scopes are not part of this convention, and a scope never changes the rules for choosing a type — `feat(docs)` is still a misuse of `feat`.
+
 #### Type
 
-Use **`feat`**, **`fix`**, or **`refactor`** only when **production code** is changed. Production code is anything built and shipped to users:
-- Java sources under `backend/src/main/java/`
-- TypeScript sources under `frontend/src/` (excluding test files)
+Pick the type from the **paths of the changed files**, not from how the work feels. **Production code** is Java under `backend/src/main/java/` or TypeScript under `frontend/src/` (excluding test files, e.g. `*Test.java` / `*.test.*`).
 
-For all other changes, use the most specific type below:
+1. **Does any changed file live in production code?**
+   - **No** → `feat`, `fix`, and `refactor` are **forbidden**. Use `docs`, `test`, `build`, or `ci`. A change to `docs/`, `.github/`, or root config is never a feature or a fix, no matter how new or large it is.
+   - **Yes** → `feat` / `fix` / `refactor` are allowed (still pick the most specific type below).
+2. **Mixed commit** (production + non-production files)? The production change decides the type.
+
+Then choose the most specific type from the table below:
 
 | Type         | Description                                                                                                                                          |
 |--------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
