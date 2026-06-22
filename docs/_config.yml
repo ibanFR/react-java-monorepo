@@ -6,10 +6,11 @@ url: https://github.com/ibanFR/react-java-monorepo
 repository: https://github.com/ibanFR/react-java-monorepo
 
 aux_links:
+  Blog: /blog/
   Iván Fernández: https://ibanfr.github.io/
   View on GitHub: https://github.com/ibanFR/react-java-monorepo
-  
-aux_links_new_tab: true
+
+aux_links_new_tab: false
 back_to_top: true
 back_to_top_text: "Back to top"
 
@@ -30,6 +31,22 @@ callouts:
   warning:
     title: Warning
     color: red
+
+permalink: /blog/:year/:month/:day/:title/
+
+plugins:
+  - jekyll-archives
+
+jekyll-archives:
+  enabled:
+    - tags
+    - categories
+  layouts:
+    tag: archive
+    category: archive
+  permalinks:
+    tag: /blog/tag/:name/
+    category: /blog/category/:name/
 
 collections:
   xp:
@@ -88,3 +105,11 @@ defaults:
       type: "lean"
     values:
       layout: default
+
+  # Blog posts
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      nav_exclude: true
