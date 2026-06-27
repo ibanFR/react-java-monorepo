@@ -32,14 +32,14 @@ Parse the skill arguments:
 
 ## Steps
 
-1. **Ask the user which lookups to run** — use the `AskUserQuestion` tool with a single **multi-select** question ("Which lookups should I run before drafting the task?") offering these two options:
+1. **Ask how to gather context for the task** — use the `AskUserQuestion` tool with a single **multi-select** question asking how context for the Jira task should be gathered (e.g. "How should I gather context for this Jira task?"), offering these two options:
 
    - **Search the codebase** — "Search the codebase for relevant background"
    - **Search for related Jira issues** — "Search for related Jira issues in GAUZ"
 
-   The tool also surfaces a built-in **"Other"** option, which here means **user-provided context**: free text the user types to supply background directly instead of (or in addition to) the lookups.
+   The tool also surfaces a built-in free-text option (labelled **"Type something"** by default), which here means **user-provided context**: background the user types directly instead of (or in addition to) the lookups. The phrasing of the question should make clear the user can type their own context there.
 
-   Treat the response as follows: run lookup (a) only if **Search the codebase** was selected and lookup (b) only if **Search for related Jira issues** was selected. Run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs regardless of the answers. If the user supplies text via **"Other"**, use it as additional context when drafting the description in step 2 (feeding the `context` field), and still run whichever of (a)/(b) were also selected. If only **"Other"** is provided with no lookups selected, draft from the summary plus that user-provided context alone.
+   Treat the response as follows: run lookup (a) only if **Search the codebase** was selected and lookup (b) only if **Search for related Jira issues** was selected. Run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs regardless of the answers. If the user supplies free text via the **"Type something"** option, use it as additional context when drafting the description in step 2 (feeding the `context` field), and still run whichever of (a)/(b) were also selected. If only free text is provided with no lookups selected, draft from the summary plus that user-provided context alone.
 
    **a. Search the codebase** — only if the user said yes. This is a full-stack monorepo with three independently built modules; pick the one(s) the summary touches:
 
