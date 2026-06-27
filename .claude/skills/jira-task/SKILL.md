@@ -4,6 +4,7 @@ description: "Creates a Jira Task in the Gauzeder project. Accepts a single argu
 user-invocable: true
 argument-hint: '<summary>'
 allowed-tools:
+  - AskUserQuestion
   - mcp__atlassian-rovo-mcp__atlassianUserInfo
   - mcp__atlassian-rovo-mcp__searchJiraIssuesUsingJql
   - mcp__atlassian-rovo-mcp__createJiraIssue
@@ -31,12 +32,14 @@ Parse the skill arguments:
 
 ## Steps
 
-1. **Ask the user which lookups to run** — ask both questions before proceeding:
+1. **Ask the user which lookups to run** — use the `AskUserQuestion` tool with a single **multi-select** question ("Which lookups should I run before drafting the task?") offering these two options:
 
-   > 1. Search the codebase for relevant background? (yes / no)
-   > 2. Search for related Jira issues in **GAUZ**? (yes / no)
+   - **Search the codebase** — "Search the codebase for relevant background"
+   - **Search for related Jira issues** — "Search for related Jira issues in GAUZ"
 
-   Record each answer. Then run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs regardless of the answers.
+   The tool also surfaces a built-in **"Other"** option, which here means **user-provided context**: free text the user types to supply background directly instead of (or in addition to) the lookups.
+
+   Treat the response as follows: run lookup (a) only if **Search the codebase** was selected and lookup (b) only if **Search for related Jira issues** was selected. Run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs regardless of the answers. If the user supplies text via **"Other"**, use it as additional context when drafting the description in step 2 (feeding the `context` field), and still run whichever of (a)/(b) were also selected. If only **"Other"** is provided with no lookups selected, draft from the summary plus that user-provided context alone.
 
    **a. Search the codebase** — only if the user said yes. This is a full-stack monorepo with three independently built modules; pick the one(s) the summary touches:
 
