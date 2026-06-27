@@ -48,61 +48,15 @@ jekyll-archives:
     tag: /blog/tag/:name/
     category: /blog/category/:name/
 
-collections:
-  xp:
-    output: true
-  align:
-    output: true
-  architecture:
-    output: true
-  lean:
-    output: true
-
-
-just_the_docs:
-  collections:
-    xp:
-      name: Extreme Programming (XP)
-    architecture:
-      name: Architecture
-    align:
-      name: Align
-    lean:
-      name: Lean
-
+# Documentation sections (Lean, Align, Architecture, Extreme Programming) are
+# plain page directories under docs/. Navigation is built from each page's
+# front matter (title / parent / grand_parent / nav_order / has_children)
+# rather than from Jekyll collections.
 defaults:
   # All regular Jekyll pages
   - scope:
       path: ""
       type: "pages"
-    values:
-      layout: default
-      
-  # Align and Understand collection
-  - scope:
-      path: ""
-      type: "align"
-    values:
-      layout: default
-      
-  # Software Architecture collection
-  - scope:
-      path: ""
-      type: "architecture"
-    values:
-      layout: default
-
-  # Extreme Programming (XP) collection
-  - scope:
-      path: ""
-      type: "xp"
-    values:
-      layout: default
-
-  # Lean collection
-  - scope:
-      path: ""
-      type: "lean"
     values:
       layout: default
 
