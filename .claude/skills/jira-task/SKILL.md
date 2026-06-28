@@ -39,7 +39,7 @@ Parse the skill arguments:
 
    The tool also surfaces a built-in free-text option (labelled **"Type something"** by default), which here means **user-provided context**: background the user types directly instead of (or in addition to) the lookups. The phrasing of the question should make clear the user can type their own context there.
 
-   Treat the response as follows: run lookup (a) only if **Search the codebase** was selected and lookup (b) only if **Search for related Jira issues** was selected. Run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs regardless of the answers. If the user supplies free text via the **"Type something"** option, use it as additional context when drafting the description in step 2 (feeding the `context` field), and still run whichever of (a)/(b) were also selected. If only free text is provided with no lookups selected, draft from the summary plus that user-provided context alone.
+   Treat the response as follows: run lookup (a) only if **Search the codebase** was selected and lookup (b) only if **Search for related Jira issues** was selected. Run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs, whether or not any option was selected. If the user supplies free text via the **"Type something"** option, use it as additional context when drafting the description in step 2. If no option is selected, draft the context from the summary.
 
    **a. Search the codebase** — only if the user said yes. This is a full-stack monorepo with three independently built modules; pick the one(s) the summary touches:
 
@@ -66,7 +66,7 @@ Parse the skill arguments:
 
    Extract key terms from the summary (nouns, verbs, domain words — skip stop words). Keep only issues semantically related to the summary. Discard unrelated hits.
 
-   **c. Resolve the current user** — always run. Call `mcp__atlassian-rovo-mcp__atlassianUserInfo` with no arguments. Extract and store the `accountId` for use as the assignee in step 3.
+   **c. Resolve the current user** — always run. Call `mcp__atlassian-rovo-mcp__atlassianUserInfo` with no arguments. Extract and store the `accountId` for use as the assignee in step 4.
 
 2. **Refine the summary, then generate description content** from the (refined) summary and lookup results:
    - **refinedSummary**: rewrite the user-provided summary for clarity — concise, imperative mood, no trailing period, leading with the action and its object (e.g. "logout endpoint" → "Add a logout endpoint to the auth API"). Preserve the original intent and any specific names/identifiers; do not invent scope. Use this refined summary in the confirmation preview (step 3) and as the `summary` when creating the issue (step 4). If the rewrite materially changes wording, note the original underneath the preview.
