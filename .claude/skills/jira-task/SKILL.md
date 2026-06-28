@@ -4,6 +4,7 @@ description: "Creates a Jira Task in the Gauzeder project. Accepts a single argu
 user-invocable: true
 argument-hint: '<summary>'
 allowed-tools:
+  - AskUserQuestion
   - mcp__atlassian-rovo-mcp__atlassianUserInfo
   - mcp__atlassian-rovo-mcp__searchJiraIssuesUsingJql
   - mcp__atlassian-rovo-mcp__createJiraIssue
@@ -31,12 +32,14 @@ Parse the skill arguments:
 
 ## Steps
 
-1. **Ask the user which lookups to run** — ask both questions before proceeding:
+1. **Ask how to gather context for the task** — use the `AskUserQuestion` tool with a single **multi-select** question asking how context for the Jira task should be gathered (e.g. "How should I gather context for this Jira task?"), offering these two options:
 
-   > 1. Search the codebase for relevant background? (yes / no)
-   > 2. Search for related Jira issues in **GAUZ**? (yes / no)
+   - **Search the codebase** — "Search the codebase for relevant background"
+   - **Search for related Jira issues** — "Search for related Jira issues in GAUZ"
 
-   Record each answer. Then run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs regardless of the answers.
+   The tool also surfaces a built-in free-text option (labelled **"Type something"** by default), which here means **user-provided context**: background the user types directly instead of (or in addition to) the lookups. The phrasing of the question should make clear the user can type their own context there.
+
+   Treat the response as follows: run lookup (a) only if **Search the codebase** was selected and lookup (b) only if **Search for related Jira issues** was selected. Run the enabled lookups below in parallel — do not wait for one before starting the others. The current-user lookup (c) always runs, whether or not any option was selected. If the user supplies free text via the **"Type something"** option, use it as additional context when drafting the description in step 2. If no option is selected, draft the context from the summary.
 
    **a. Search the codebase** — only if the user said yes. This is a full-stack monorepo with three independently built modules; pick the one(s) the summary touches:
 
@@ -63,7 +66,7 @@ Parse the skill arguments:
 
    Extract key terms from the summary (nouns, verbs, domain words — skip stop words). Keep only issues semantically related to the summary. Discard unrelated hits.
 
-   **c. Resolve the current user** — always run. Call `mcp__atlassian-rovo-mcp__atlassianUserInfo` with no arguments. Extract and store the `accountId` for use as the assignee in step 3.
+   **c. Resolve the current user** — always run. Call `mcp__atlassian-rovo-mcp__atlassianUserInfo` with no arguments. Extract and store the `accountId` for use as the assignee in step 4.
 
 2. **Refine the summary, then generate description content** from the (refined) summary and lookup results:
    - **refinedSummary**: rewrite the user-provided summary for clarity — concise, imperative mood, no trailing period, leading with the action and its object (e.g. "logout endpoint" → "Add a logout endpoint to the auth API"). Preserve the original intent and any specific names/identifiers; do not invent scope. Use this refined summary in the confirmation preview (step 3) and as the `summary` when creating the issue (step 4). If the rewrite materially changes wording, note the original underneath the preview.
@@ -73,7 +76,7 @@ Parse the skill arguments:
    - **relatedIssues**: if Jira issues were found in step 1b, a separate paragraph starting with `"Related Jira issues: "` followed by one ADF link node per issue (text = KEY, href = `https://ibanfr.atlassian.net/browse/<KEY>`), separated by `", "` text nodes. Omit entirely if nothing was found.
    - **acceptanceCriteria**: 4–6 specific, testable bullet points derived from the summary.
 
-3. **Present for confirmation** — display the following to the user and ask "Create this Jira task? (yes / no / edit)":
+3. **Present for confirmation** — first display the following preview to the user:
 
    ```
    **Summary**: <refinedSummary>
@@ -95,9 +98,17 @@ Parse the skill arguments:
    <if reworded> Original summary: <summary>
    ```
 
-   - If the user says **no**: abort and inform them no issue was created.
-   - If the user says **edit**: ask what to change, update the content, and show the preview again.
-   - If the user says **yes**: proceed to the next step.
+   Then use the `AskUserQuestion` tool to ask whether to create the task, offering these two options:
+
+   - **Yes** — "Create the Jira task as previewed"
+   - **No** — "Do not create the task"
+
+   The built-in free-text option (**"Type something"**) is the **edit** path: the user types what to change. Make the question phrasing make this clear (e.g. "Create this Jira task? Choose 'Type something' to request edits.").
+
+   Handle the response as follows:
+   - **No**: abort and inform the user no issue was created.
+   - **Free text (edit)**: apply the requested changes to the content, show the updated preview, and ask again with the same question.
+   - **Yes**: proceed to the next step.
 
 4. **Create the issue** — call `mcp__atlassian-rovo-mcp__createJiraIssue` with:
    - `cloudId`: `https://ibanfr.atlassian.net`
