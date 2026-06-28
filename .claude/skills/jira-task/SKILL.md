@@ -76,7 +76,7 @@ Parse the skill arguments:
    - **relatedIssues**: if Jira issues were found in step 1b, a separate paragraph starting with `"Related Jira issues: "` followed by one ADF link node per issue (text = KEY, href = `https://ibanfr.atlassian.net/browse/<KEY>`), separated by `", "` text nodes. Omit entirely if nothing was found.
    - **acceptanceCriteria**: 4–6 specific, testable bullet points derived from the summary.
 
-3. **Present for confirmation** — display the following to the user and ask "Create this Jira task? (yes / no / edit)":
+3. **Present for confirmation** — first display the following preview to the user:
 
    ```
    **Summary**: <refinedSummary>
@@ -98,9 +98,17 @@ Parse the skill arguments:
    <if reworded> Original summary: <summary>
    ```
 
-   - If the user says **no**: abort and inform them no issue was created.
-   - If the user says **edit**: ask what to change, update the content, and show the preview again.
-   - If the user says **yes**: proceed to the next step.
+   Then use the `AskUserQuestion` tool to ask whether to create the task, offering these two options:
+
+   - **Yes** — "Create the Jira task as previewed"
+   - **No** — "Do not create the task"
+
+   The built-in free-text option (**"Type something"**) is the **edit** path: the user types what to change. Make the question phrasing make this clear (e.g. "Create this Jira task? Choose 'Type something' to request edits.").
+
+   Handle the response as follows:
+   - **No**: abort and inform the user no issue was created.
+   - **Free text (edit)**: apply the requested changes to the content, show the updated preview, and ask again with the same question.
+   - **Yes**: proceed to the next step.
 
 4. **Create the issue** — call `mcp__atlassian-rovo-mcp__createJiraIssue` with:
    - `cloudId`: `https://ibanfr.atlassian.net`
