@@ -131,12 +131,17 @@ filters break required checks in a monorepo, see
 
 ### Steps
 
-All settings are found under **Settings → Branches → Branch protection rules**. Edit (or create) the rule for `main`.
+This repository enforces required checks through a repository **Ruleset**, not a classic branch protection rule. All
+settings are found under **Settings → Rules → Rulesets**. Edit (or create) the ruleset that targets `main`.
 
 1. Navigate to the repository **Settings** tab.
-2. In the left sidebar click **Branches**, then click **Edit** next to the `main` rule (or create a new rule).
-3. Check **Require status checks to pass before merging**.
-4. In the search box that appears, type the name of each job you want to require and select it:
+2. In the left sidebar click **Rules → Rulesets**, then click **New ruleset → New branch ruleset** (or **Edit** the
+   existing ruleset that targets `main`).
+3. Give the ruleset a name (for example, `main`) and set **Enforcement status** to **Active**.
+4. Under **Target branches**, click **Add target → Include default branch** (or **Add by pattern** and enter `main`).
+5. In the **Rules** list, check **Require status checks to pass**.
+6. Click **Add checks** and, in the search box that appears, type the name of each job you want to require and select
+   it:
    - `java-build-and-test`
    - `react-build-and-test`
 
@@ -144,13 +149,13 @@ All settings are found under **Settings → Branches → Branch protection rules
    > GitHub automatically counts it as passing. Adding `skip-check` as a required check is not needed
    > and would cause PRs to be blocked whenever only one stack's files are changed (since `skip-check`
    > for the other stack would be skipped but not passing from GitHub's perspective).
-5. Optionally check **Require branches to be up to date before merging** to ensure CI always runs against the latest
+7. Optionally check **Require branches to be up to date before merging** to ensure CI always runs against the latest
    base branch.
-6. Click **Save changes**.
+8. Click **Create** (or **Save changes** when editing an existing ruleset).
 
-> **Tip:** the job name used in the branch protection rule must match the job `id` in the workflow YAML exactly
+> **Tip:** the job name added to the ruleset must match the job `id` in the workflow YAML exactly
 > (case-sensitive). GitHub will not offer auto-complete for jobs that have never run, so trigger the workflow at least
-> once — by opening a draft pull request — before configuring the rule.
+> once — by opening a draft pull request — before configuring the ruleset.
 
 ### What happens next
 
@@ -181,7 +186,7 @@ All settings are found under **Settings → Branches → Branch protection rules
 4. Optionally increase **Required number of approvals** if your team practices peer review.
 5. Click **Save changes**.
 
-> Combine this rule with the **Require status checks to pass before merging** setting (see the section above) to
+> Combine this rule with the **Require status checks to pass** ruleset setting (see the section above) to
 > ensure every commit on `main` has been built and tested before it arrives.
 
 ### What happens next
