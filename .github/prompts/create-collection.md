@@ -3,7 +3,7 @@ mode: 'agent'
 description: 'Add a new Jekyll just-the-docs collection to the documentation site'
 ---
 
-Add a **`${input:collection-name}`** collection to the Jekyll documentation site under `docs/`.
+Add a **`${input:collection-name}`** collection to the Jekyll documentation site under `site/`.
 
 Follow every step below exactly. Do not skip any step.
 
@@ -11,13 +11,13 @@ Follow every step below exactly. Do not skip any step.
 
 ## Step 1 — Create the folder structure
 
-Create the following directories inside `docs/`:
+Create the following directories inside `site/`:
 
 ```
-docs/_${input:collection-name}/
-docs/_${input:collection-name}/explanation/
-docs/_${input:collection-name}/how-to/
-docs/_${input:collection-name}/reference/
+site/_${input:collection-name}/
+site/_${input:collection-name}/explanation/
+site/_${input:collection-name}/how-to/
+site/_${input:collection-name}/reference/
 ```
 
 ---
@@ -26,7 +26,7 @@ docs/_${input:collection-name}/reference/
 
 Create one Markdown landing page per subfolder. Use the exact filenames and front matter shown below.
 
-### `docs/_${input:collection-name}/explanation/${input:collection-name}-explanation.md`
+### `site/_${input:collection-name}/explanation/${input:collection-name}-explanation.md`
 
 ```markdown
 ---
@@ -41,7 +41,7 @@ Explanation of ${input:collection-name} concepts, practices, and principles.
 {: .fs-6 .fw-300 }
 ```
 
-### `docs/_${input:collection-name}/how-to/${input:collection-name}-how-to.md`
+### `site/_${input:collection-name}/how-to/${input:collection-name}-how-to.md`
 
 ```markdown
 ---
@@ -56,7 +56,7 @@ Step-by-step guides for ${input:collection-name} tasks and workflows.
 {: .fs-6 .fw-300 }
 ```
 
-### `docs/_${input:collection-name}/reference/${input:collection-name}-reference.md`
+### `site/_${input:collection-name}/reference/${input:collection-name}-reference.md`
 
 ```markdown
 ---
@@ -73,9 +73,9 @@ Reference material for ${input:collection-name} concepts, patterns, and practice
 
 ---
 
-## Step 3 — Register the collection in `docs/_config.yml`
+## Step 3 — Register the collection in `site/_config.yml`
 
-Open `docs/_config.yml` and make **three** additions:
+Open `site/_config.yml` and make **three** additions:
 
 ### 3a. Under `collections:` — enable output
 
@@ -112,10 +112,10 @@ defaults:
 
 ## Step 4 — Verify the site builds without errors
 
-Start the Jekyll development server from the `docs/` directory and check the console output for errors:
+Start the Jekyll development server from the `site/` directory and check the console output for errors:
 
 ```bash
-cd docs && bundle exec jekyll serve --trace 2>&1
+cd site && bundle exec jekyll serve --trace 2>&1
 ```
 
 - Wait for the line `Server address: http://127.0.0.1:4000` to confirm the server started successfully.

@@ -32,14 +32,14 @@ workflow that does the build and deploy, so no further configuration is needed. 
 ## Trigger a deployment
 
 Once the source is set to **GitHub Actions**, the `.github/workflows/pages.yml` workflow runs automatically
-whenever changes under `docs/` are pushed to `main`:
+whenever changes under `site/` are pushed to `main`:
 
 ```yaml
 on:
   push:
     branches: ["main"]
     paths:
-      - "docs/**"
+      - "site/**"
   workflow_dispatch:
 ```
 

@@ -34,7 +34,7 @@ Do **not** use a scope (e.g. `feat(docs):`). Scopes are not part of this convent
 Pick the type from the **paths of the changed files**, not from how the work feels. **Production code** is Java under `backend/src/main/java/` or TypeScript under `frontend/src/` (excluding test files, e.g. `*Test.java` / `*.test.*`).
 
 1. **Does any changed file live in production code?**
-   - **No** → `feat`, `fix`, and `refactor` are **forbidden**. Use `docs`, `test`, `build`, or `ci`. A change to `docs/`, `.github/`, or root config is never a feature or a fix, no matter how new or large it is.
+   - **No** → `feat`, `fix`, and `refactor` are **forbidden**. Use `docs`, `test`, `build`, or `ci`. A change to `site/`, `.github/`, or root config is never a feature or a fix, no matter how new or large it is.
    - **Yes** → `feat` / `fix` / `refactor` are allowed (still pick the most specific type below).
 2. **Mixed commit** (production + non-production files)? The production change decides the type.
 
