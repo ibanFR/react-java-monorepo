@@ -83,3 +83,17 @@ When connected to atlassian-rovo-mcp:
 - **MUST** use cloudId = "https://ibanfr.atlassian.net" (do NOT call getAccessibleAtlassianResources)
 - **MUST** keep search result sets small: pass `limit: 10` for Confluence CQL searches. For Jira JQL searches the tool enforces a 50–100 range, so pass `maxResults: 50` (the minimum).
 
+
+## Agent skills
+
+### Issue tracker
+
+Issues are Jira tickets in project GAUZ, accessed through the Atlassian Rovo MCP. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary, applied as Jira labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` plus ADRs in `architecture/decisions/`. See `docs/agents/domain.md`.
