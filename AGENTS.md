@@ -10,7 +10,7 @@ Full-stack monorepo with three **independently built** modules — there is **no
 |-----------------|--------------------------------------------|------------------------------------|
 | `frontend/`     | React 19 + TypeScript + Vite 8             | Single-page login UI               |
 | `backend/`      | Java 25 + Quarkus 3.34 + Hibernate/Panache | REST API with hexagonal/DDD design |
-| `docs/`         | Jekyll (Ruby) + just-the-docs              | GitHub Pages documentation site    |
+| `site/`         | Jekyll (Ruby) + just-the-docs              | GitHub Pages documentation site    |
 | `architecture/` | Structurizr DSL (`workspace.dsl`)          | C4 model + ADRs (`architecture/decisions/`) |
 
 ## Commands
@@ -38,8 +38,8 @@ mvn test -Dtest=AuthResourceTest#methodName    # single test method
 ```
 `./mvnw` wrapper exists; system Maven also works. `*IT` integration tests (`@QuarkusIntegrationTest`) are skipped by default (`skipITs=true`).
 
-### Docs (`docs/`)
-Built by the `pages.yml` GitHub Actions workflow (Jekyll). No local build needed for code changes; editing `docs/` Markdown is sufficient.
+### Docs site (`site/`)
+Built by the `pages.yml` GitHub Actions workflow (Jekyll). No local build needed for code changes; editing `site/` Markdown is sufficient. Preview locally with `./site/start_local_server.sh`.
 
 ### Docker
 `docker compose up` runs both services. Backend JAR must be built first: `cd backend && mvn package -DskipTests`. Backend image: `backend/src/main/docker/Dockerfile.jvm` (port 8080); frontend: `node:22-alpine` volume mount (port 5173).
@@ -68,13 +68,13 @@ Entry: `src/main.tsx` (ReactDOM root + StrictMode) → `App.tsx` → `src/pages/
 
 ## CI
 
-Path-filtered GitHub Actions on push/PR to `main`: `java-build-test.yml` (backend, `mvn -B package`), `frontend-build-test.yml` (lint+build+test), `pages.yml` (Jekyll deploy on `docs/**`). The Java workflow reads the JDK version from `pom.xml`'s `maven.compiler.release`.
+Path-filtered GitHub Actions on push/PR to `main`: `java-build-test.yml` (backend, `mvn -B package`), `frontend-build-test.yml` (lint+build+test), `pages.yml` (Jekyll deploy on `site/**`). The Java workflow reads the JDK version from `pom.xml`'s `maven.compiler.release`.
 
 ## Conventions (enforced)
 
 - **Branch naming**: every coding task starts on a new branch `<JIRA-ID>-<short-kebab-description>` (e.g. `AUTH-42-add-logout-endpoint`), branched off `main` unless told otherwise. If no Jira ID is given, ask for one before starting.
 - **Commits** (`.github/git-commit-instructions.md`): format `<type>: <summary>` where type is `feat|fix|refactor|test|build|ci|docs`. Use `feat`/`fix`/`refactor` **only** when production code changes (`backend/src/main/java/`, `frontend/src/` excluding tests). Summary in imperative, lowercase, no trailing period; include filenames when relevant. Always include a body with bullet points (what/why/impact). Footer **must** contain the Jira link `https://ibanfr.atlassian.net/browse/<JIRA-ID>` extracted from the branch name.
-- The repo follows XP / Trunk-Based Development practices (see `docs/_xp/`): integrate to mainline frequently, keep the build green.
+- The repo follows XP / Trunk-Based Development practices (see `site/extreme-programming/`): integrate to mainline frequently, keep the build green.
 
 ## Atlassian Rovo MCP
 

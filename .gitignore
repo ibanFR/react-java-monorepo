@@ -10,8 +10,8 @@ frontend/node_modules/
 frontend/.vite/
 
 # Jekyll build and cache
-/docs/_site/
-/docs/.jekyll-cache/
+/site/_site/
+/site/.jekyll-cache/
 
 # Structurizr Lite local output (diagrams, workspace state, Lucene index)
 architecture/.structurizr/

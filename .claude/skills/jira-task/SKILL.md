@@ -45,11 +45,11 @@ Parse the skill arguments:
 
    - `backend/` — Java 25 + Quarkus, hexagonal/DDD. Sources under `backend/src/main/java/com/ibanfr/`, layered (per bounded context) as `domain` (entities + repository ports), `application` (use-case services + value objects), `infrastructure.adapters.in.*` (inbound adapters, e.g. REST), `infrastructure.adapters.out.*` (outbound adapters, e.g. JPA). `auth` is the only context today, but search the whole `com/ibanfr/` tree so future contexts and adapter types are covered — never hardcode `auth`, `rest`, or `jpa`.
    - `frontend/` — React 19 + TypeScript + Vite. Components/pages under `frontend/src/` (e.g. `src/pages/`), tests co-located as `*.test.tsx`.
-   - `docs/` — Jekyll documentation site; `architecture/` — Structurizr C4 model (`workspace.dsl`) and ADRs (`architecture/decisions/`).
+   - `site/` — Jekyll documentation site; `architecture/` — Structurizr C4 model (`workspace.dsl`) and ADRs (`architecture/decisions/`).
 
    Strategy:
 
-   1. **Identify candidate module(s)** — map key terms from the summary to `backend`, `frontend`, `docs`, or `architecture`. Most tasks touch one or two.
+   1. **Identify candidate module(s)** — map key terms from the summary to `backend`, `frontend`, `site`, or `architecture`. Most tasks touch one or two.
    2. **Find relevant code** — grep the chosen module(s) for key terms, working from the inside out for the backend (`domain` first, then `application`, then `infrastructure`):
       - Backend: `grep -rn "<key term>" backend/src/main/java/com/ibanfr/ --include="*.java" -l` — searches the entire source root so every current and future bounded context, layer, and adapter is included.
       - Frontend: `grep -rn "<key term>" frontend/src/ --include="*.ts" --include="*.tsx" -l`

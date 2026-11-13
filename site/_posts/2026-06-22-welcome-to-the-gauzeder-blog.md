@@ -20,7 +20,7 @@ Posts are grouped by **category** (broad topic area) and **tag** (specific conce
 
 ## Authoring a new post
 
-Add a file to `docs/_posts/` following the `YYYY-MM-DD-title.md` naming convention with the front-matter below:
+Add a file to `site/_posts/` following the `YYYY-MM-DD-title.md` naming convention with the front-matter below:
 
 ```yaml
 ---

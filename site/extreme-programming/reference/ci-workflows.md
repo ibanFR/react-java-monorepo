@@ -85,14 +85,14 @@ A `skip-check` job mirrors the Java workflow for PRs that do not touch `frontend
 ## Pages deployment
 
 Defined in `.github/workflows/pages.yml`. Builds the Jekyll documentation site and deploys it to GitHub Pages on
-every push to `main` under `docs/**`, and on manual `workflow_dispatch`. For setup instructions see
+every push to `main` under `site/**`, and on manual `workflow_dispatch`. For setup instructions see
 [Publish Docs to GitHub Pages]({% link extreme-programming/how-to/publish-docs-to-github-pages.md %}).
 
 The workflow has two jobs:
 
 | Job | Action | Notes |
 |-----|--------|-------|
-| `build` | Checkout, `ruby/setup-ruby@v1`, `bundle exec jekyll build`, `actions/upload-pages-artifact@v4` | `bundler-cache: true` installs and caches gems. Builds with the Pages base path and uploads `docs/_site/`. |
+| `build` | Checkout, `ruby/setup-ruby@v1`, `bundle exec jekyll build`, `actions/upload-pages-artifact@v4` | `bundler-cache: true` installs and caches gems. Builds with the Pages base path and uploads `site/_site/`. |
 | `deploy` | `actions/deploy-pages@v4` | Publishes the artifact to the `github-pages` environment. `needs: build`. |
 
 A `concurrency` group named `pages` with `cancel-in-progress: true` permits only one deployment at a time.

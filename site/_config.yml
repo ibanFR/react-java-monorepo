@@ -49,7 +49,7 @@ jekyll-archives:
     category: /blog/category/:name/
 
 # Documentation sections (Lean, Align, Architecture, Extreme Programming) are
-# plain page directories under docs/. Navigation is built from each page's
+# plain page directories under site/. Navigation is built from each page's
 # front matter (title / parent / grand_parent / nav_order / has_children)
 # rather than from Jekyll collections.
 defaults:
