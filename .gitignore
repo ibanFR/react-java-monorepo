@@ -12,6 +12,10 @@ frontend/.vite/
 # Jekyll build and cache
 /site/_site/
 /site/.jekyll-cache/
+# Legacy paths from before the site moved from docs/ to site/ (GAUZ-58);
+# keeps stale local build output in existing clones from being committed
+/docs/_site/
+/docs/.jekyll-cache/
 
 # Structurizr Lite local output (diagrams, workspace state, Lucene index)
 architecture/.structurizr/

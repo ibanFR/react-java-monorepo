@@ -35,7 +35,7 @@ Reference: [https://docs.structurizr.com/local/quickstart](https://docs.structur
 
 This monorepo already has a `site/` directory for the Jekyll-based documentation site. The Structurizr workspace lives in a separate top-level `architecture/` directory to keep it self-contained and mountable as a single Docker volume without coupling to the Jekyll site.
 
-The supplementary Markdown folder inside the workspace is named `documentation/` (not `docs/`) to keep it clearly separate from the repo's `site/` Jekyll documentation site.
+The supplementary Markdown folder inside the workspace is named `documentation/` (not `docs/`). The name was chosen when the Jekyll site lived in a top-level `docs/` directory, to avoid two `docs/` folders in the repo. The site has since moved to `site/`, so the clash no longer applies, but the name was kept to avoid churn.
 
 ```
 react-java-monorepo/
@@ -67,7 +67,7 @@ react-java-monorepo/
 | Top-level `architecture/` directory | Keeps Structurizr workspace isolated from the Jekyll site and from source code. Structurizr Lite expects a single directory to mount. |
 | Split `workspace.dsl` into `model.dsl`, `views.dsl`, `styles.dsl` via `!include` | Follows the DSL best practice of separating concerns; each file has a single responsibility and stays readable as the model grows. |
 | `decisions/` inside `architecture/` | ADRs are referenced directly from the DSL (`!adrs`) so Structurizr Lite can render them alongside diagrams. |
-| `documentation/` instead of `docs/` | Supplementary Markdown sections for the Structurizr UI (`!docs`) are stored under `documentation/` to keep it clearly separate from the repo's `site/` Jekyll site. |
+| `documentation/` instead of `docs/` | Supplementary Markdown sections for the Structurizr UI (`!docs`) are stored under `documentation/`. Chosen when the Jekyll site lived in `docs/` to avoid two `docs/` folders; kept after the site moved to `site/`. |
 
 ### `workspace.dsl`
 
