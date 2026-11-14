@@ -12,6 +12,7 @@ Full-stack monorepo with three **independently built** modules — there is **no
 | `backend/`      | Java 25 + Quarkus 3.34 + Hibernate/Panache | REST API with hexagonal/DDD design |
 | `site/`         | Jekyll (Ruby) + just-the-docs              | GitHub Pages documentation site    |
 | `architecture/` | Structurizr DSL (`workspace.dsl`)          | C4 model + ADRs (`architecture/decisions/`) |
+| `docs/`         | Markdown                                   | Harness files for agents (`docs/agents/`) |
 
 ## Commands
 
@@ -76,10 +77,16 @@ Path-filtered GitHub Actions on push/PR to `main`: `java-build-test.yml` (backen
 - **Commits** (`.github/git-commit-instructions.md`): format `<type>: <summary>` where type is `feat|fix|refactor|test|build|ci|docs`. Use `feat`/`fix`/`refactor` **only** when production code changes (`backend/src/main/java/`, `frontend/src/` excluding tests). Summary in imperative, lowercase, no trailing period; include filenames when relevant. Always include a body with bullet points (what/why/impact). Footer **must** contain the Jira link `https://ibanfr.atlassian.net/browse/<JIRA-ID>` extracted from the branch name.
 - The repo follows XP / Trunk-Based Development practices (see `site/extreme-programming/`): integrate to mainline frequently, keep the build green.
 
-## Atlassian Rovo MCP
+## Agent skills
 
-When connected to atlassian-rovo-mcp:
-- **MUST** use Jira project key = GAUZ
-- **MUST** use cloudId = "https://ibanfr.atlassian.net" (do NOT call getAccessibleAtlassianResources)
-- **MUST** keep search result sets small: pass `limit: 10` for Confluence CQL searches. For Jira JQL searches the tool enforces a 50–100 range, so pass `maxResults: 50` (the minimum).
+### Issue tracker
 
+Issues are Jira tickets in project GAUZ. Read `docs/agents/issue-tracker.md` before any Atlassian Rovo MCP call (Jira or Confluence): it holds the required cloudId, project key and result limits.
+
+### Triage labels
+
+Default five-role vocabulary, applied as Jira labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` plus ADRs in `architecture/decisions/` (overrides skill defaults). See `docs/agents/domain.md`.
