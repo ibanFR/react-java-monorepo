@@ -23,12 +23,9 @@ Parse the skill arguments:
 
 - **summary** (required): the skill argument. If not provided, ask the user: "What should the task summary be?"
 
-## Hardcoded values
+## Tracker rules
 
-- `cloudId`: `https://ibanfr.atlassian.net`
-- `projectKey`: `GAUZ`
-- `issueTypeName`: `Task`
-- Never call `getAccessibleAtlassianResources`.
+Read `docs/agents/issue-tracker.md` before any Rovo MCP call: it holds the `cloudId`, project key and result limits that every call below uses.
 
 ## Steps
 
@@ -59,9 +56,7 @@ Parse the skill arguments:
    If no relevant module can be identified, skip silently.
 
    **b. Search for related Jira issues** — only if the user said yes. Call `mcp__atlassian-rovo-mcp__searchJiraIssuesUsingJql` with:
-   - `cloudId`: `https://ibanfr.atlassian.net`
    - `jql`: `project = GAUZ AND text ~ "<key terms from summary>" ORDER BY updated DESC`
-   - `maxResults`: `50` (the JQL tool enforces a 50–100 range; `50` is the minimum)
    - `fields`: `["summary", "status", "issuetype"]`
 
    Extract key terms from the summary (nouns, verbs, domain words — skip stop words). Keep only issues semantically related to the summary. Discard unrelated hits.
@@ -111,16 +106,14 @@ Parse the skill arguments:
    - **Yes**: proceed to the next step.
 
 4. **Create the issue** — call `mcp__atlassian-rovo-mcp__createJiraIssue` with:
-   - `cloudId`: `https://ibanfr.atlassian.net`
-   - `projectKey`: `GAUZ`
+   - `projectKey` from the tracker rules
    - `summary`: the refined summary from step 2
-   - `issueTypeName`: `Task`
+   - `issueType`: `Task`
    - `contentFormat`: `adf`
    - `assignee_account_id`: the `accountId` from step 1c
    - `description`: the ADF document below with generated content substituted in
 
 5. **Link related issues** — for each related issue found in step 1b, call `mcp__atlassian-rovo-mcp__createIssueLink` with:
-   - `cloudId`: `https://ibanfr.atlassian.net`
    - `type`: `Relates`
    - `inwardIssue`: the new issue key
    - `outwardIssue`: the related issue key

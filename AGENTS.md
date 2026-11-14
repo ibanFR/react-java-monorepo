@@ -12,6 +12,7 @@ Full-stack monorepo with three **independently built** modules — there is **no
 | `backend/`      | Java 25 + Quarkus 3.34 + Hibernate/Panache | REST API with hexagonal/DDD design |
 | `site/`         | Jekyll (Ruby) + just-the-docs              | GitHub Pages documentation site    |
 | `architecture/` | Structurizr DSL (`workspace.dsl`)          | C4 model + ADRs (`architecture/decisions/`) |
+| `docs/`         | Markdown                                   | Harness files for agents (`docs/agents/`) |
 
 ## Commands
 
