@@ -76,19 +76,11 @@ Path-filtered GitHub Actions on push/PR to `main`: `java-build-test.yml` (backen
 - **Commits** (`.github/git-commit-instructions.md`): format `<type>: <summary>` where type is `feat|fix|refactor|test|build|ci|docs`. Use `feat`/`fix`/`refactor` **only** when production code changes (`backend/src/main/java/`, `frontend/src/` excluding tests). Summary in imperative, lowercase, no trailing period; include filenames when relevant. Always include a body with bullet points (what/why/impact). Footer **must** contain the Jira link `https://ibanfr.atlassian.net/browse/<JIRA-ID>` extracted from the branch name.
 - The repo follows XP / Trunk-Based Development practices (see `site/extreme-programming/`): integrate to mainline frequently, keep the build green.
 
-## Atlassian Rovo MCP
-
-When connected to atlassian-rovo-mcp:
-- **MUST** use Jira project key = GAUZ
-- **MUST** use cloudId = "https://ibanfr.atlassian.net" (do NOT call getAccessibleAtlassianResources)
-- **MUST** keep search result sets small: pass `limit: 10` for Confluence CQL searches. For Jira JQL searches the tool enforces a 50–100 range, so pass `maxResults: 50` (the minimum).
-
-
 ## Agent skills
 
 ### Issue tracker
 
-Issues are Jira tickets in project GAUZ, accessed through the Atlassian Rovo MCP. See `docs/agents/issue-tracker.md`.
+Issues are Jira tickets in project GAUZ. Read `docs/agents/issue-tracker.md` before any Atlassian Rovo MCP call (Jira or Confluence): it holds the required cloudId, project key and result limits.
 
 ### Triage labels
 
@@ -96,4 +88,4 @@ Default five-role vocabulary, applied as Jira labels. See `docs/agents/triage-la
 
 ### Domain docs
 
-Single-context: root `GLOSSARY.md` plus ADRs in `architecture/decisions/`. See `docs/agents/domain.md`.
+Single-context: root `GLOSSARY.md` plus ADRs in `architecture/decisions/` (overrides skill defaults). See `docs/agents/domain.md`.

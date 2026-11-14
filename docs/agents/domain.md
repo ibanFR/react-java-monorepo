@@ -17,10 +17,10 @@ If either doesn't exist, **proceed silently**. Don't flag its absence; don't sug
 /
 ├── GLOSSARY.md
 ├── architecture/
-│   ├── workspace.dsl              ← Structurizr C4 model
+│   ├── *.dsl                      ← Structurizr C4 model (entry: workspace.dsl)
+│   ├── documentation/             ← C4 documentation pages
 │   └── decisions/
-│       ├── 0001-use-quarkus.md
-│       └── 0002-use-react-vite.md
+│       └── NNNN-kebab-title.md    ← ADRs
 ├── backend/
 └── frontend/
 ```
